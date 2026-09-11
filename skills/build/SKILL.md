@@ -29,8 +29,8 @@ to route cannot be disconnected.
 - **Zero slice files** → **stop.** Say the next act: run `devpath:slice` against the approved design.
 - **A slice's `depends_on` does not parse, or the front-matter block does not parse, or a field carries
   the wrong shape** → **stop and name the exact field and the slice.** *Malformed* stops the stage;
-  *absent* is a legal state meaning *not yet*, and `done` and `fix_cycles` are legitimately absent on a
-  new slice.
+  *absent* is a legal state meaning *not yet*, and `wrote`, `done` and `fix_cycles` are legitimately
+  absent on a new slice.
 - **A slice's `depends_on` holds a slice that is not `done`** → **refuse and name the slice.** A
   structural check on a field that already exists, not a gate.
 - **A `touches` path that does not resolve** → **record a deviation and carry on.** Do not refuse: a
@@ -308,9 +308,9 @@ next act, `devpath:integrate`, which rewrites the section from scratch.
 
 **The slice file is `skills/slice/SKILL.md`'s `## Write`, followed exactly** — front matter carrying
 `depends_on` and `touches`, the test-first block, and exactly the four headings that section prints, with
-`done` and `fix_cycles` absent. The schema hook in README's own hook list flags any heading outside those
-four. **Go to that section by name** rather than writing the shape from memory; it is the same argument
-this section makes for `## Outcome checks`.
+`wrote`, `done` and `fix_cycles` absent. The schema hook in README's own hook list flags any heading
+outside those four. **Go to that section by name** rather than writing the shape from memory; it is the
+same argument this section makes for `## Outcome checks`.
 
 **`## What to build` comes from the shortfall, which is the only source you have.** The `- [ ] unmet` line
 says what was observed and carries the ID that resolves against `## Outcomes`, which says the target, and
@@ -622,9 +622,9 @@ is the same on both: another plugin's hook rejects the commit itself on grounds 
 commit-time check rejects it twice over a defect in the slice, under `### A rejected commit` below. Either
 way `git add -A` stages the same content straight back into the same refusal. The `- [ ] blocked` box
 reaches disk and never reaches the branch, and **nothing else for that slice reaches it either: no code,
-no `done: true`, no box.** The slice's `wrote:` holds those paths already, and the only thing behind this
-is a later `devpath:build` reaching *the working tree is dirty*, which prints them and asks a human. There
-is no second backstop.
+no `done: true`, no box.** Name every path left in the working tree when you stop, and `wrote:` is not
+that list: the only thing behind this is a later `devpath:build` reaching *the working tree is dirty*,
+which prints those paths and asks a human. There is no second backstop.
 
 **Say which of those paths is the slice file, and that it holds the only copy of the pause.** That stop
 offers *restore `HEAD`'s version* on a tracked modified path, and taking it there deletes the refusal and
@@ -654,11 +654,11 @@ review rather than a missed catch** — the box still names the file and how it 
 ```markdown
 ## Deviations
 - [ ] excess — docs/tolerance-notes.md, +140 -0 against `main` as this branch found it; committed
-      by `git add -A`, and no agent on this run wrote it
+      by `git add -A`, and absent from this slice's `wrote:`
 - [ ] excess — package-lock.json, +812 -4 against `main` as this branch found it; committed by
-      `git add -A`, and no agent on this run wrote it
+      `git add -A`, and absent from this slice's `wrote:`
 - [ ] excess — .claude/rules/rstk-slds2-ux-standards.md, +0 -72 against `main` as this branch found
-      it; committed by `git add -A`, and no agent on this run wrote it
+      it; committed by `git add -A`, and absent from this slice's `wrote:`
 ```
 
 **A filename is not a finding, and the third box is why.** Those three paths are a notes file somebody
@@ -1176,8 +1176,8 @@ unilateral way past a criterion you could not meet.
 against that field, and a fix commit goes through the same audit a build commit does, so a rule naming
 only the first worker has every later one flagging its own work.
 
-**It is read off git, not recalled.** The tree was clean when you were dispatched, so `git status
---porcelain` is the whole of what changed while you worked. **Go down it and add the paths you wrote
+**It is read off git, not recalled.** The tree was clean when this slice's first worker was dispatched,
+so `git status --porcelain` is the whole of what changed since. **Go down it and add the paths you wrote
 yourself** — a yes or a no per path, where a list from memory drops whatever you touched first. **A file
 something you ran produced is not a file you wrote**: a generator's output, a formatter's sweep, a
 lockfile the package manager rewrote. Those are what the audit exists to put in front of a human, and
@@ -1279,7 +1279,7 @@ whether the slice finished or not, so the audit can write its box on the very sl
 - [ ] O2 implies mid-cycle proration and the design carries no basis for it — needs a decision
       before this slice continues.
 - [ ] excess — package-lock.json, +812 -4 against `main` as this branch found it; committed by
-      `git add -A`, and no agent on this run wrote it
+      `git add -A`, and absent from this slice's `wrote:`
 ```
 
 **The frozen test still answers *frozen* here, and still reads `done` to do it.** No `done: true` plus an

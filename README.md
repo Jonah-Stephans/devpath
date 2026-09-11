@@ -733,7 +733,7 @@ writers first write them.
   here, with no tag and no box, when a re-cut changes the behaviour a built slice deployed. **Three kinds
   of open box live here and the tag separates them**: an untagged `- [ ]` is a pause, `- [ ] blocked` is a
   pause on a write a foreign hook refused, and `- [ ] excess` is the commit audit's note on files a commit
-  swept in that no agent on the run wrote. **More than one can be open on one slice.**
+  swept in past this slice's `wrote:`. **More than one can be open on one slice.**
 - **`## Critique findings`** — Critique's slice pass. Open boxes append and are never deleted, and
   a closed one leaves at the next re-review, into the archive below.
 
