@@ -183,7 +183,7 @@ readings of one test: the grep answers *is anything open*, the section answers *
 one*.
 
 **Two boxes under `## Deviations` carry a tag, and neither is yours.** `- [ ] excess` is the commit audit's
-note on files a commit swept in past the slice's `touches`, and review is exactly where it gets closed — by
+note on files a commit swept in that no agent wrote, and review is exactly where it gets closed — by
 the human, in front of the diff. `- [ ] blocked` is a pause — a foreign guard refused a write the slice
 needs — and the `devpath:build` worker that resumes the slice closes it. **Leave both as you found them**:
 neither is a finding to fix, and neither is yours to close.
