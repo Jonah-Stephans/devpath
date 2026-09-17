@@ -182,11 +182,11 @@ proceed on this slice until a human clears it** — **a pause box is never groun
 readings of one test: the grep answers *is anything open*, the section answers *what do I do about this
 one*.
 
-**Two boxes under `## Deviations` carry a tag, and neither is yours.** `- [ ] excess` is the commit audit's
-note on files a commit swept in past the slice's `touches`, and review is exactly where it gets closed — by
-the human, in front of the diff. `- [ ] blocked` is a pause — a foreign guard refused a write the slice
-needs — and the `devpath:build` worker that resumes the slice closes it. **Leave both as you found them**:
-neither is a finding to fix, and neither is yours to close.
+**Two boxes under `## Deviations` carry a tag, and neither is yours.** `- [ ] excess` is the commit
+audit's note on files a commit swept in past the slice's `wrote:`, and review is exactly where it gets
+closed — by the human, in front of the diff. `- [ ] blocked` is a pause — a foreign guard refused a write
+the slice needs — and the `devpath:build` worker that resumes the slice closes it. **Leave both as you
+found them**: neither is a finding to fix, and neither is yours to close.
 
 **A box you write runs to 250 words.** Mandated. The half that has to fit is what would be observed and
 enough of the reproduction that the next reader can get to it — across a field run's 114 boxes that half

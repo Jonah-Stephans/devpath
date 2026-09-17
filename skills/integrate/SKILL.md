@@ -251,8 +251,8 @@ than a false positive.**
 
 **A tagged box under `## Deviations` holds this refusal exactly as a pause does**, and the tag names the
 decision rather than whether one is owed. `- [ ] excess` is the commit audit's note on files a commit
-swept in, closed on the human's decision at merge: `- [x] false positive` where the files were in scope
-and `touches` was incomplete, or `- [x] won't fix — <reason>` where they were not.
+swept in past the slice's `wrote:`, closed on the human's decision at merge: `- [x] false positive` where
+the file belonged in the commit, or `- [x] won't fix — <reason>` where it did not.
 
 **`- [ ] blocked` is the other tagged box, and its exit is not a tick.** A foreign guard refused a write
 a slice needs; a human clears the obstacle outside the run and the next `devpath:build` closes the box on

@@ -29,8 +29,8 @@ to route cannot be disconnected.
 - **Zero slice files** → **stop.** Say the next act: run `devpath:slice` against the approved design.
 - **A slice's `depends_on` does not parse, or the front-matter block does not parse, or a field carries
   the wrong shape** → **stop and name the exact field and the slice.** *Malformed* stops the stage;
-  *absent* is a legal state meaning *not yet*, and `done` and `fix_cycles` are legitimately absent on a
-  new slice.
+  *absent* is a legal state meaning *not yet*, and `wrote`, `done` and `fix_cycles` are legitimately
+  absent on a new slice.
 - **A slice's `depends_on` holds a slice that is not `done`** → **refuse and name the slice.** A
   structural check on a field that already exists, not a gate.
 - **A `touches` path that does not resolve** → **record a deviation and carry on.** Do not refuse: a
@@ -308,9 +308,9 @@ next act, `devpath:integrate`, which rewrites the section from scratch.
 
 **The slice file is `skills/slice/SKILL.md`'s `## Write`, followed exactly** — front matter carrying
 `depends_on` and `touches`, the test-first block, and exactly the four headings that section prints, with
-`done` and `fix_cycles` absent. The schema hook in README's own hook list flags any heading outside those
-four. **Go to that section by name** rather than writing the shape from memory; it is the same argument
-this section makes for `## Outcome checks`.
+`wrote`, `done` and `fix_cycles` absent. The schema hook in README's own hook list flags any heading
+outside those four. **Go to that section by name** rather than writing the shape from memory; it is the
+same argument this section makes for `## Outcome checks`.
 
 **`## What to build` comes from the shortfall, which is the only source you have.** The `- [ ] unmet` line
 says what was observed and carries the ID that resolves against `## Outcomes`, which says the target, and
@@ -622,9 +622,9 @@ is the same on both: another plugin's hook rejects the commit itself on grounds 
 commit-time check rejects it twice over a defect in the slice, under `### A rejected commit` below. Either
 way `git add -A` stages the same content straight back into the same refusal. The `- [ ] blocked` box
 reaches disk and never reaches the branch, and **nothing else for that slice reaches it either: no code,
-no `done: true`, no box.** Name every path left in the working tree when you stop, because the only thing
-behind this is a later `devpath:build` reaching *the working tree is dirty*, which prints those paths and
-asks a human. There is no second backstop.
+no `done: true`, no box.** Name every path left in the working tree when you stop, and `wrote:` is not
+that list: the only thing behind this is a later `devpath:build` reaching *the working tree is dirty*,
+which prints those paths and asks a human. There is no second backstop.
 
 **Say which of those paths is the slice file, and that it holds the only copy of the pause.** That stop
 offers *restore `HEAD`'s version* on a tracked modified path, and taking it there deletes the refusal and
@@ -642,19 +642,23 @@ was reachable. **Uncommitted, that work is one `git checkout` from gone.** `git 
 memory is out of the loop, and a pause that kept nothing would put it back — in the one case where the
 next actor is a human who did not do the work.
 
-**Stage with `git add -A`**, and **every path the commit carries beyond the slice's declared scope gets
-its own `- [ ] excess — <the path, how it differs from the base, and what swept it in>` under
-`## Deviations`, and that slot is the only place the box's shape is set.** The command that fills the
-middle clause, and the order it forces, are below.
+**Stage with `git add -A`**, and **every path the commit carries that is absent from the slice's `wrote:`
+and not under `devpath/` gets its own `- [ ] excess — <the path, how it differs from the base, and what
+swept it in>` under `## Deviations`, and that slot is the only place the box's shape is set.** The command
+that fills the middle clause, and the order it forces, are below.
+
+**A worker that returned without filling `wrote:` puts its own work in front of the box**, and nothing
+mechanical enforces that field any more than any other write of a worker's. **The degradation is noise at
+review rather than a missed catch** — the box still names the file and how it differs.
 
 ```markdown
 ## Deviations
 - [ ] excess — docs/tolerance-notes.md, +140 -0 against `main` as this branch found it; committed
-      by `git add -A` and outside this slice's `touches`
+      by `git add -A`, and absent from this slice's `wrote:`
 - [ ] excess — package-lock.json, +812 -4 against `main` as this branch found it; committed by
-      `git add -A` and outside this slice's `touches`
+      `git add -A`, and absent from this slice's `wrote:`
 - [ ] excess — .claude/rules/rstk-slds2-ux-standards.md, +0 -72 against `main` as this branch found
-      it; committed by `git add -A` and outside this slice's `touches`
+      it; committed by `git add -A`, and absent from this slice's `wrote:`
 ```
 
 **A filename is not a finding, and the third box is why.** Those three paths are a notes file somebody
@@ -690,26 +694,26 @@ joins on `done` rather than reading the tag** — a tag is prose a run can forge
 mechanical, and the test deciding whether a push is denied reads the mechanical one.
 
 **Why the audit beat a filter**, because it looks like the lazier choice and is not. Both need the *same*
-first comparison — what git reports changed, versus `touches` plus `devpath/` plus created files — and
-the difference between them is exclude-it versus include-and-note-it. **The machinery costs are no longer
-identical**: noting a path runs a second comparison, against the base, that a filter would never make.
-The conclusion survives the extra cost. A filter's risk is dropping a file Build legitimately created,
-which shows up later as a failed deploy somebody has to debug. The audit's risk is committing something
+first comparison — what git reports changed, versus `wrote:` plus `devpath/` — and the difference between
+them is exclude-it versus include-and-note-it. **The machinery costs are no longer identical**: noting a
+path runs a second comparison, against the base, that a filter would never make. The conclusion survives
+the extra cost. A filter's risk is dropping a file Build legitimately created, which shows up later as a
+failed deploy somebody has to debug. The audit's risk is committing something
 out of scope, and all the audit does about that is put the file in front of a human before merge.
 **A flag is not a catch.** Closing the box edits the box, not the commit, so whether a flagged file
 merges turns on whoever read it — which is why the working tree has to be clean before Build dispatches.
-A clean tree at dispatch narrows the audit to what this run wrote plus whatever arrived while it ran —
-and the first of those is the same set the filter would wrongly drop, so the audit still wins. And
-`git add -A` cannot lose work, which takes Build's memory out of the loop.
+A clean tree at dispatch narrows the audit to what this run wrote plus whatever arrived while it ran, and
+`wrote:` tells those two apart — so the file a filter would wrongly drop is committed and carries no box.
+And `git add -A` cannot lose work, which takes Build's memory out of the loop.
 
 **Who closes that box, and it is not a skill.** No later `devpath` run is looking for it — **a done slice
 with an open box under `## Deviations` is not a pause and must not be read as one**, and where a pause
 commit writes one the frozen test below still reads that slice correctly, because the pause box is there
-beside it. **It is the human's, at review**, in the grammar: `- [x] false positive` if the files were in
-scope and `touches` was simply incomplete, or `- [x] won't fix — <reason>` if they were not. **Closing it
-replaces `excess` with the disposition** — every checked box carries its tag as the first word, and only
-`fixed` and `met` mean the code changed. What puts it in front of them is Integrate's step 3, which
-refuses while any box is open and names the exits.
+beside it. **It is the human's, at review**, in the grammar: `- [x] false positive` if the file belonged
+in the commit, or `- [x] won't fix — <reason>` if it did not. **Closing it replaces `excess` with the
+disposition** — every checked box carries its tag as the first word, and only `fixed` and `met` mean the
+code changed. What puts it in front of them is Integrate's step 3, which refuses while any box is open
+and names the exits.
 
 **The audit is also a backstop, and that is a rule rather than a side effect.**
 
@@ -1098,7 +1102,7 @@ and finding none there costs you one read.
 code is missing. A trap names what the same test has to fail on when the code is **present and wrong**,
 which is the half red-before-green cannot see.
 
-## Deploy, then tick, then `done: true`, then return
+## Deploy, then tick, then `wrote:`, then `done: true`, then return
 
 **Mandated, in that order.**
 
@@ -1167,6 +1171,21 @@ this context.** You are a subagent: write `fixed` and `met`, name the criterion 
 return. The session holding the engineer writes that line when they say it — so it is never your
 unilateral way past a criterion you could not meet.
 
+**Then fill `wrote:` on the slice file, and this step binds every return rather than only this sequence**
+— a build, a fix pass, a retry after a rejected commit, and a pause. The commit audit compares the commit
+against that field, and a fix commit goes through the same audit a build commit does, so a rule naming
+only the first worker has every later one flagging its own work.
+
+**It is read off git, not recalled.** The tree was clean when this slice's first worker was dispatched,
+so `git status --porcelain` is the whole of what changed since. **Go down it and add the paths you wrote
+yourself** — a yes or a no per path, where a list from memory drops whatever you touched first. **A file
+something you ran produced is not a file you wrote**: a generator's output, a formatter's sweep, a
+lockfile the package manager rewrote. Those are what the audit exists to put in front of a human, and
+claiming one is how it stops. **`devpath/` stays off the field**, which the audit exempts anyway.
+
+**It is a set and it accumulates.** Add what you wrote, delete nothing, and write no path twice — nine fix
+passes over three files leave three paths, which is what keeps the field from growing with a run's length.
+
 **Then write `done: true`, then return.** A slice is done when its acceptance criteria are ticked — that is
 the predicate the field carries. Value is always `true`; absence is how you say no; nothing ever writes
 `false`.
@@ -1207,6 +1226,8 @@ arrive at one whose criteria are already ticked. So, explicitly: **deploy the sl
 do not hand back red.** **Criteria already ticked stay ticked** — *do not write them and do not rewrite
 them* holds here exactly as it does above. **`done: true` is already on the slice and you do not rewrite
 it**: the first worker wrote it, the field says the acceptance criteria are ticked, and they still are.
+**`wrote:` is the one field you add to** — the paths the first worker put there stay, and whatever you
+wrote fixing the refusal joins them.
 
 ## Deviations, and the pause test
 
@@ -1258,7 +1279,7 @@ whether the slice finished or not, so the audit can write its box on the very sl
 - [ ] O2 implies mid-cycle proration and the design carries no basis for it — needs a decision
       before this slice continues.
 - [ ] excess — package-lock.json, +812 -4 against `main` as this branch found it; committed by
-      `git add -A` and outside this slice's `touches`
+      `git add -A`, and absent from this slice's `wrote:`
 ```
 
 **The frozen test still answers *frozen* here, and still reads `done` to do it.** No `done: true` plus an
@@ -1293,7 +1314,8 @@ file against. Waiting for a human to tick it waits forever: the human changes th
 ## On a fix pass
 
 **Mandated: write `- [x] fixed` on each finding you fixed, in the same pass that fixes it.** The dispatch
-already names the findings and carries them, so you have the list you are dispositioning.
+already names the findings and carries them, so you have the list you are dispositioning. **And fill
+`wrote:` before you return** — your commit goes through the same audit a build commit does.
 
 ***Fixed* is a claim about work just done, which only the pass that did it can make** — the same rule as
 ticking a criterion as you satisfy it and never before. Critique owns `false positive`; `won't fix` is

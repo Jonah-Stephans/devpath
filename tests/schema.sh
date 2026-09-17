@@ -568,6 +568,11 @@ done
 # Commas are stripped before the comparison: prose writes 1,500 and an awk
 # argument cannot.
 #
+# A fourth rule rides the same machinery over a list rather than a number: which
+# front-matter fields a slice is created without, written in four places and
+# stale in two of them the day `wrote` was added. The sites capture the list and
+# never a field name, so adding a field is still a one-line change per site.
+#
 # The site phrases are part of the assertion. A rewording that no longer matches
 # goes red saying so, and the fix is to move the phrase into the list. Each has
 # to survive on one line, as in the checks above.
@@ -576,6 +581,13 @@ import re
 
 out = []
 def bad(rule, detail): out.append(rule + "|" + detail)
+
+# A run of backticked snake-case names joined by ", " and " and ", captured whole.
+FIELDS = r'((?:`[a-z_]+`(?:, | and ))*`[a-z_]+`)'
+
+def norm(v):  # a list compares as its set of names, a cap as its digits
+    names = re.findall(r'`([a-z_]+)`', v)
+    return " ".join(sorted(names)) if names else v.replace(",", "")
 
 SITES = [
     ("the box cap", [
@@ -588,6 +600,13 @@ SITES = [
         ("skills/build/SKILL.md",    r'`## Deviations` runs to ([0-9,]+)',                       "Build's mandate"),
         ("README.md",                r'\| a bullet under `## Deviations` \| ([0-9,]+) words',     "README's table"),
         ("README.md",                r'-v bulletcap=([0-9,]+)',                                   "the awk README ships"),
+    ]),
+    ("the absent-at-creation field list", [
+        ("README.md",             r'\*\*' + FIELDS + r' are absent at creation',  "README's skeleton"),
+        ("skills/slice/SKILL.md", r'\*\*' + FIELDS + r' are absent at creation',  "Slice's mandate"),
+        ("skills/build/SKILL.md", r'meaning \*not yet\*, and ' + FIELDS + r' are legitimately',
+                                                                                  "Build's refusal list"),
+        ("skills/build/SKILL.md", r'^' + FIELDS + r' absent\. The schema hook',   "Build's re-cut instruction"),
     ]),
     ("the section budget", [
         ("skills/build/SKILL.md",    r'on one slice file to ([0-9,]+) words',                    "Build's mandate"),
@@ -614,22 +633,22 @@ for cap, sites in SITES:
             continue
         hits = [(i + 1, m.group(1)) for i, l in enumerate(text[f]) for m in [re.search(pat, l)] if m]
         if not hits:
-            bad(cap, "%s in %s no longer reads as this check expects, so the number written there went unread — the phrase is part of the assertion and a rewording has to move it here too" % (name, f))
+            bad(cap, "%s in %s no longer reads as this check expects, so what is written there went unread — the phrase is part of the assertion and a rewording has to move it here too" % (name, f))
             continue
         for ln, got in hits:
-            found.setdefault(got.replace(",", ""), []).append("%s at %s:%d, written %s" % (name, f, ln, got))
+            found.setdefault(norm(got), []).append("%s at %s:%d, written %s" % (name, f, ln, got))
     if len(found) > 1:
         bad(cap, "is written %d different ways and every copy has to agree: %s" % (
             len(found), "; ".join(" and ".join(found[v]) for v in sorted(found))))
 
 if not out:
-    out.append("summary|three prose caps agree across every copy of them")
+    out.append("summary|three prose caps and the absent-at-creation field list agree across every copy of them")
 
 print("\n".join(out))
 CAP
 )
 if [ -z "$CAPS" ]; then
-  fail 'prose caps' 'skills/build/SKILL.md, skills/critique/SKILL.md and README.md' "this check produced no output at all, so its python did not run to the end and nothing here was compared"
+  fail 'prose caps' 'skills/build/SKILL.md, skills/critique/SKILL.md, skills/slice/SKILL.md and README.md' "this check produced no output at all, so its python did not run to the end and nothing here was compared"
 fi
 CAPSUM=''
 while IFS= read -r p; do

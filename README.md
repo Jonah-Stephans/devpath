@@ -704,6 +704,9 @@ depends_on:
   - devpath/tolerance-config/slices/01-schema.md
 touches:
   - force-app/main/default/classes/ToleranceService.cls
+wrote:
+  - force-app/main/default/classes/ToleranceService.cls
+  - force-app/main/default/classes/ToleranceServiceTest.cls
 done: true
 fix_cycles: 1
 ---
@@ -717,8 +720,8 @@ fix_cycles: 1
 ```
 
 **That skeleton is a mid-life slice, not a new one.** `depends_on` and `touches` are Slice's, written when
-the file is created. **`done` and `fix_cycles` are absent at creation** and appear when their writers first
-write them.
+the file is created. **`wrote`, `done` and `fix_cycles` are absent at creation** and appear when their
+writers first write them.
 
 - **`## What to build`** — the end-to-end behaviour this slice makes work, from the user's perspective, not
   a layer-by-layer list.
@@ -730,7 +733,7 @@ write them.
   here, with no tag and no box, when a re-cut changes the behaviour a built slice deployed. **Three kinds
   of open box live here and the tag separates them**: an untagged `- [ ]` is a pause, `- [ ] blocked` is a
   pause on a write a foreign hook refused, and `- [ ] excess` is the commit audit's note on files a commit
-  swept in past this slice's `touches`. **More than one can be open on one slice.**
+  swept in past this slice's `wrote:`. **More than one can be open on one slice.**
 - **`## Critique findings`** — Critique's slice pass. Open boxes append and are never deleted, and
   a closed one leaves at the next re-review, into the archive below.
 
@@ -771,9 +774,9 @@ demotes `done`, `intent_accepted` and `design_approved` out of the top level wit
 validity as YAML. **One consequence, because a reader will see it:** GitHub renders the block as a table
 above the body.
 
-### The eight fields
+### The nine fields
 
-**Four on the spec, four on each slice.** YAML, snake case, `type` first and the gates last so a diff shows
+**Four on the spec, five on each slice.** YAML, snake case, `type` first and the gates last so a diff shows
 a gate appearing at the end of the block rather than in the middle of it.
 
 | Field | Lives on | Written at | Read by |
@@ -784,6 +787,7 @@ a gate appearing at the end of the block rather than in the middle of it.
 | `design_approved` | spec | Design | the router — `devpath:build` refuses without it, and so do `devpath:slice`, `devpath:critique` and `devpath:integrate` |
 | `depends_on` | each slice | Slice | the cited-paths check; Build's structural refusal; the order walk |
 | `touches` | each slice | Slice | the cited-paths check; the contention script; Build's mid-run-stop intersection — **three readers and no fourth** |
+| `wrote` | each slice | every `devpath:build` worker | the commit audit — **one reader**. A set of paths, filled off git after the work and added to on every pass, which is what `creates:` could never be |
 | `done` | each slice | Build | the router; Build's `depends_on` refusal; derived spec progress |
 | `fix_cycles` | each slice | Critique | the fix cycles cap, read by `devpath:build` at its start. **Its presence** is read by Integrate's step 3 — absent on a built slice, the slice pass never ran |
 

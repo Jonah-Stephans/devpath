@@ -140,9 +140,11 @@ unaffected. It is one copy per slice file — a five-slice spec carries it five 
 a template that is generated rather than referenced. It is **Build's suggestion living in Slice's
 output**: Slice writes it, and `devpath:build` names it as the thing the slice file carries.
 
-**`done` and `fix_cycles` are absent at creation.** Mandated. `done: true` is Build's, written when the
-acceptance criteria are ticked; `fix_cycles` is Critique's, written on its first pass over the slice. A
-slice created carrying `fix_cycles: 1` would spend a lap of the fix cycles cap before anything was fixed.
+**`wrote`, `done` and `fix_cycles` are absent at creation.** Mandated. `wrote` is every `devpath:build`
+worker's, filled off git before that worker returns and read by the commit audit; `done: true` is Build's,
+written when the acceptance criteria are ticked; `fix_cycles` is Critique's, written on its first pass over
+the slice. A slice created carrying `fix_cycles: 1` would spend a lap of the fix cycles cap before anything
+was fixed.
 
 ### `## What to build`
 
@@ -195,6 +197,10 @@ would name files that do not exist yet, so **it reads as checked while nothing c
 Build's business. Every shared-file collision worth catching is a collision on a pre-existing file, and
 the edge case resolves without it: if slice 2 modifies a file slice 1 *creates*, slice 2 already
 `depends_on` slice 1.
+
+**`wrote` is not that field under another name.** It is filled *after* the work, off
+`git status --porcelain`, about files that are on disk — so it predicts nothing and decides no layout.
+**One is a prediction and the other is a reading**, and `skills/build/SKILL.md` sets its rule.
 
 **Two consequences of `touches` being pre-existing-only.** On a greenfield repo, whose dominant act is
 creating metadata, `touches` is often empty — so any future trigger derived from it is blind exactly where
