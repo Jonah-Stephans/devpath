@@ -669,9 +669,7 @@ in-flight edits* by a human who held nothing else. **`+0 -72` is the finding**, 
 had it.
 
 **One box per path, never one box for the commit.** The figures are per path and so is the disposition:
-three files reaching one box took one decision that was wrong about all three of them. **The dirty-tree
-stop above asks one question per path for exactly that reason.** It named this box as its precedent while
-this box still took paths in bulk; now both are per path.
+three files reaching one box took one decision that was wrong about all three of them.
 
 **The comparison sits before the provenance, because a grep hit is one line.** Integrate finds open
 boxes with `grep -rn '^[[:space:]]*- \[ \]'`, which returns the line a box starts on and never the line
@@ -801,8 +799,8 @@ open at review, and the later one is the whole of it rather than the second inst
 ### The commit message
 
 **Suggested, with its reason. The subject line is the slice's title; the body names the slice file's path,
-and may also carry the fix narrative for a finding this commit closes or the reasoning behind a deviation
-this commit writes. Nothing else. Where the repo's standards rule says otherwise, the repo's rule wins and
+and may also carry the fix narrative for a finding this commit closes, the reasoning behind a deviation
+this commit writes, or how the code got here. Nothing else. Where the repo's standards rule says otherwise, the repo's rule wins and
 this line retires for that repo.**
 
 ```
@@ -818,19 +816,9 @@ the commit that finishes the slice after a human clears the box. **Intended rath
 a repo that wants them distinguishable in `git log --oneline` has its own standards rule, which wins here
 as above.
 
-**Why *nothing else* became a closed set of two.** `## How long a finding and a deviation may run` below
-caps what a box and a bullet may run to, and the words it displaces have to have somewhere to be. **The
-commit that made the fix is the honest home for why the fix was right**: the reasoning sits next to the
-diff it is about, where a reader who wants it is already looking, rather than in an append-only ledger
-every later reader has to read past. **A cap with no named route out is a quota, and a quota gets gamed.**
-
-**One clause covers both halves, because both writers commit.** `devpath:build` and `devpath:slice` are the
-two that write under `## Deviations`, and each commits what it wrote. `devpath:integrate` writes nothing
-there — it reads Build's bullet and prints it into the pull request body.
-
-**A worker does not commit, so a fix narrative reaches the body through its return.** The words a fix
-pass is told to keep out of the box go into what it hands back, and this is the orchestrator putting them
-where they belong.
+**A worker does not commit, so everything past the path reaches the body through its return.** Each item
+is words another rule keeps out of the slice file or the source, and the commit keeps them beside the diff
+they explain.
 
 **Why the path in the body rather than a prefix or a trailer.** `git log -- devpath/<slug>/` already finds
 a spec's commits, so the path is for the human reading one commit in isolation and asking *which slice was
@@ -1065,6 +1053,15 @@ it.** **Its rule-loading half is the mandate above** and what stays suggested is
 naming and structure were always part of it, and that half stands on its own. Neither half can be
 rephrased as *ensure the standard is loaded*, because an agent cannot self-report whether a rule loaded.
 
+**Suggested, with its reason: write each comment for a reader who has only the code, as it stands
+today.** Give that reader what the code cannot show — usually why it is this way — once, where they need
+it. **A comment names no document that reader lacks, such as a spec, a slice, a Story or a ticket, and no
+earlier version of the code**; how the code got here belongs in the commit body. **When you change code,
+rewrite the comment above it to fit the code as it now is.** This holds over a neighbouring file's
+comments, and where the repo's standards rule says otherwise, its rule wins on that point. *Why: on one
+measured build, three in four comment lines repeated the code beside them, and another run's doc blocks
+grew on every fix lap.*
+
 **The slice's `touches` is not a work list.**
 
 > **`touches` is what this slice will collide with, not where to work.**
@@ -1075,11 +1072,6 @@ real model-behaviour risk and the risk is live: tell an agent the change goes in
 that file even when the right change is elsewhere. On a greenfield repo `touches` is often empty anyway,
 because it holds pre-existing paths only.
 
-**You already have the repo's standard if it is unscoped.** An unscoped `.claude/rules/` file auto-loads
-into every session and every non-fork subagent and is re-injected after compaction. **A scoped one you do
-not have yet**, and that is what the two reads above are for. **A repo with no standards rule builds
-against nothing, and that is the honest degradation** rather than a defect.
-
 **The slice file carries a test-first line.** It reads:
 
 > Watch a new test go red before you make it green.
@@ -1087,9 +1079,8 @@ against nothing, and that is the honest degradation** rather than a defect.
 > cover yet. Retires when Apex gets mutation testing.*
 
 **It is a suggestion and not a mandate, and the reason is that a reviewer cannot verify it from a diff.**
-This is not choosing to be lax; it is refusing to write a rule in a voice nothing can back. Both halves of
-its rationale are statements about what is and is not possible: a test written first cannot be a coverage
-artifact, and a test you never saw fail is a test you have not tested.
+Both halves of its rationale are statements about what is and is not possible: a test written first cannot
+be a coverage artifact, and a test you never saw fail is a test you have not tested.
 
 **Mandated: read `## Traps` on `spec.md` before you write a test, and go to that heading by name.** Every
 entry is one mutation a test on this spec has to be able to fail on, written by a critic on an earlier
