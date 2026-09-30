@@ -1244,11 +1244,12 @@ anyway: a box under `## Deviations` is an item whose **marker** a run reads, sin
 denies a push on it and Integrate's test 1 refuses on it, where a bullet is only ever read by the human at
 merge. **`## Critique findings` gets no section budget**, because a budget there caps how many defects a
 critic may report, and every closed box leaving for the archive at the next re-review bounds that section
-instead. **And widening the commit body to a closed set of two is not new headroom** — the field run behind
-the caps wrote 43 words a commit against the approved project's 94, because here the body is a path.
+instead. **And widening the commit body to a closed set of three is not new headroom** — the field run
+behind the caps wrote 43 words a commit against the approved project's 94, because here the body is a
+path. That run predates the third item, which moves words out of source comments and is not yet measured.
 
 **Which standard a repo uses is out of scope, and the plugin is built so the answer is swappable.** A repo
-with no standards rule builds against nothing, which is the honest degradation and not a defect.
+with no standards rule builds against Build's suggestions alone; one it adds wins where they differ.
 
 **Build's test-first line is a suggestion whose rationale names its own expiry** — it retires when Apex
 gets mutation testing.
