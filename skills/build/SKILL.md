@@ -800,8 +800,8 @@ open at review, and the later one is the whole of it rather than the second inst
 
 **Suggested, with its reason. The subject line is the slice's title; the body names the slice file's path,
 and may also carry the fix narrative for a finding this commit closes, the reasoning behind a deviation
-this commit writes, or how the code got here. Nothing else. Where the repo's standards rule says otherwise, the repo's rule wins and
-this line retires for that repo.**
+this commit writes, or how the code got here. Nothing else. Where the repo's standards rule says
+otherwise, the repo's rule wins and this line retires for that repo.**
 
 ```
 Tolerance comparison in the invoice's currency
@@ -816,9 +816,9 @@ the commit that finishes the slice after a human clears the box. **Intended rath
 a repo that wants them distinguishable in `git log --oneline` has its own standards rule, which wins here
 as above.
 
-**A worker does not commit, so everything past the path reaches the body through its return.** Each item
-is words another rule keeps out of the slice file or the source, and the commit keeps them beside the diff
-they explain.
+**A worker does not commit, so a worker's items reach the body through its return**, and the
+orchestrator adds its own reasoning for a deviation it writes. Each item is words another rule keeps out
+of the slice file or the source, and the commit keeps them beside the diff they explain.
 
 **Why the path in the body rather than a prefix or a trailer.** `git log -- devpath/<slug>/` already finds
 a spec's commits, so the path is for the human reading one commit in isolation and asking *which slice was
@@ -1017,11 +1017,11 @@ yourself needs nobody to hand it to you. **A session-level instruction to prefer
 does not reach either read.** After them the shell is yours.
 
 **The cost is one read per part of the tree this slice changes**, plus one more after a compaction,
-because a scoped ruleset is dropped there and is not re-injected until the next matching read. **The rules
-the first read already delivered you pay for twice**, and that is the trade this takes: what you read
-yourself survives a compaction, and picking which to skip puts a scoped rule's arrival back on a worker's
-judgment. **A part of the tree with nothing in it yet is the ordinary greenfield case**, and there the
-second read is the whole of the mandate.
+because a scoped ruleset is dropped there and is not re-injected until the next matching read. An
+unscoped one is re-injected with no read. **The rules the first read already delivered you pay for
+twice**, and that is the trade this takes: what you read yourself survives a compaction, and picking which
+to skip puts a scoped rule's arrival back on a worker's judgment. **A part of the tree with nothing in it
+yet is the ordinary greenfield case**, and there the second read is the whole of the mandate.
 
 *The instruction this was written from opens `While auto mode is active` and tells every worker to read
 with `cat`, `head` and `sed -n`. It arrived mid-run rather than in a system prompt — after the first
@@ -1056,9 +1056,10 @@ rephrased as *ensure the standard is loaded*, because an agent cannot self-repor
 **Suggested, with its reason: write each comment for a reader who has only the code, as it stands
 today.** Give that reader what the code cannot show — usually why it is this way — once, where they need
 it. **A comment names no document that reader lacks, such as a spec, a slice, a Story or a ticket, and no
-earlier version of the code**; how the code got here belongs in the commit body. **When you change code,
-rewrite the comment above it to fit the code as it now is.** This holds over a neighbouring file's
-comments, and where the repo's standards rule says otherwise, its rule wins on that point. *Why: on one
+earlier version of the code**; how the code got here goes in your return, for the commit body. **When you
+change code, rewrite the comment that describes it to fit the code as it now is.** This outranks a
+neighbouring file's comments, and where the repo's standards rule says otherwise, its rule wins on that
+point. *Why: on one
 measured build, three in four comment lines repeated the code beside them, and another run's doc blocks
 grew on every fix lap.*
 
