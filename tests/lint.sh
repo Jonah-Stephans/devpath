@@ -180,8 +180,8 @@ fi
 
 # ------------------------------------- 4. nothing mechanical reads a tag word
 #
-# skills/integrate/SKILL.md states the rule over the whole set: the closed set of
-# tags stays five, and nothing mechanical reads a tag word. The moment something
+# skills/integrate/SKILL.md states the rule over the whole set: nothing
+# mechanical reads a tag word. The moment something
 # mechanical reads one, that tag has become a state of its own and the frozen
 # test has two answers. `- [ ] excess`, `- [ ] blocked` and `- [ ] verify` are each
 # the same open box with its shortfall named, so every existing check matches them
@@ -388,7 +388,9 @@ fi
 #
 # Six stops put a question the run cannot answer for itself: the intent gate, the
 # design gate, the slice layout, build's dirty-tree stop, build's fix cycles cap
-# and build's verify ask. At the three gates the default *is* the judgment being asked for, so a
+# and build's verify ask. The verify ask is the one this check cannot see: its
+# options are a bullet list with no fenced illustration, so its own prose rule is
+# all that holds it. At the three gates the default *is* the judgment being asked for, so a
 # marked option is the plugin answering its own gate. The cap trip joins them by
 # that reason and not the dirty-tree stop's: the run has computed no verdict and
 # stops because it cannot decide. At the dirty-tree stop the run has read the diff

@@ -554,7 +554,9 @@ away — which is why this is a reminder and the menu ships no block that refuse
 
 **This block does nothing for a skipped second or later critique.** `fix_cycles` is present by then and the
 fixed box is checked, so the condition is false and the block stays silent. Build states that gap outright
-and carries it on an instruction alone.
+and carries it on an instruction alone. **Nor for a slice the engineer's yes finishes**: the orchestrator
+writes `done: true` on a `verify` answer and dispatches nothing, so no return arrives for the block to
+read.
 
 ```json
 {

@@ -391,7 +391,7 @@ most human-facing moment in the plugin.
 **Step 3 already walks the slice files** for test 2, so the read is free.
 
 **The grep reads no tag**, because Build mandates that this bullet carries none. Matching a plain prefix
-adds no state: the closed set of tags stays five, and nothing mechanical reads a tag word.
+adds no state, because nothing mechanical reads a tag word.
 
 ### The ask, where the harness offers a question tool
 

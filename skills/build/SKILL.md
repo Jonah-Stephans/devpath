@@ -339,8 +339,8 @@ Integrate's step 4 and read at the path it gives. One convention, two writers, a
 `## How long a finding and a deviation may run` below holds for both.
 
 > **A plain bullet, never `- [ ]`.** Integrate's test 1 greps `^[[:space:]]*- \[ \]` across the whole spec
-> directory, so a box here holds this spec's merge open forever. **No new tag either** — the closed set is
-> `fixed`, `met`, `false positive`, `won't fix` and `excess`, and this is not a disposition.
+> directory, so a box here holds this spec's merge open forever. **No tag either**, because this is not a
+> disposition.
 
 **Then expire the section and announce, in the commit that carries the cut.** A commit holding new slices
 and the old verdicts is a branch that reads as refused and rebuilt at the same time.
@@ -552,7 +552,8 @@ spec is a copy that is stale the moment Critique appends a finding, and it is ho
 happens, of which one real session's was 99% pasted history.
 
 **So a dispatch carries, and carries nothing else:** the fixed first line; the spec's path; what the
-worker is being asked to do this pass — build the slice, fix these named findings, or critique — and the
+worker is being asked to do this pass — build the slice, answer these named `verify` boxes, fix these
+named findings, or critique — and the
 findings themselves when it is a fix pass, because those are what Critique already wrote down and what the
 pass is *for*. **A rejected commit's refusal rides along on the same footing** and for the same reason: it
 is what that pass is *for*, it is the guard's own words rather than a prior worker's, and no worker can
@@ -896,33 +897,35 @@ can is in this session. `## A criterion only a person can see` in the worker pro
 writes one. **A run that finds an open `verify` box asks the same question before its first dispatch.**
 
 **Print each box's steps as prose first.** *The tool presents the decision. It never presents the
-material.* **Then ask through the question tool, one question per open `verify` box, with exactly these
-options:**
+material.* **Then ask through the question tool, one question per open `verify` box and four to a call,
+which is the tool's cap, with exactly these options:**
 
 - `I tried it, and it works`
 - `I tried it, and it doesn't work`
 - `I haven't tried it yet`
 
 **No option is marked as recommended.** The run asked because it has no verdict, so it has none to mark. **Where
-the harness offers no question tool, ask the same three in prose**, as `### The dirty-tree stop` hands over
-without one, and read the engineer's reply against them.
+the harness offers no question tool, ask the same three in prose** and read the engineer's reply against
+them.
 
-**Each answer acts on its own box:**
+**The boxes on a slice close together or not at all.** A yes in a round with any other answer is written
+nowhere and asked again next round, because a lap may move the code it was given about.
 
-- **`I tried it, and it works`** → close the box as
+- **Every box `I tried it, and it works`** → close each as
   `- [x] met — the engineer chose "I tried it, and it works" on <date>`, in their own words instead where
-  they typed any. Tick the criterion it names. With no `verify` box left open on the slice, write
-  `done: true`. Commit. **Dispatch no worker**, because the only thing one would do is redeploy code that
-  has not moved since its green deploy, so *nothing writes `done: true` before it deploys* still holds.
-  From here the run is the one any `done: true` return starts: the push, and the critic under
+  they typed any, and tick the criterion each names. Write `done: true` and commit. A refused commit is the
+  `### A rejected commit` case. **Dispatch no worker**, because the only thing one would do is redeploy
+  code that has not moved since its green deploy, so *nothing writes `done: true` before it deploys* still
+  holds. From here the run is the one any `done: true` return starts: the push, and the critic under
   `## Dispatch a critic on that same return`.
-- **`I tried it, and it doesn't work`** → ask what they saw, unless they typed it into the open option.
-  Write it onto the box as `The engineer, <date>: "<their words>"`, leave the box open, and commit it as a
-  pause commit. Then dispatch a fresh worker onto the slice to answer that box. **It is not a fix pass, and
-  nothing counts it.** No critic raised a finding, so `fix_cycles` does not move and the fix cap does not
-  bound it. Every lap starts on a human's answer, and that already limits how many there are.
-- **`I haven't tried it yet`** → the run stops as any pause stops, with no push. Integrate refuses while
-  the box is open, and the next `devpath:build` asks again.
+- **Any box `I tried it, and it doesn't work`** → on each such box, ask what they saw, unless they typed
+  it into the open option. Write it onto that box as `The engineer, <date>: "<their words>"`, leave every
+  box open, and commit it as a pause commit. Then dispatch a fresh worker onto the slice to answer the
+  boxes carrying those words. **It is not a fix pass, and nothing counts it.** No critic raised a finding,
+  so `fix_cycles` does not move and the fix cap does not bound it. Every lap starts on a human's answer,
+  and that already limits how many there are.
+- **Otherwise a box got `I haven't tried it yet`** → the run stops as any pause stops, with no push.
+  Integrate refuses while the box is open, and the next `devpath:build` asks again.
 
 **A `verify` box with an untagged pause closed below it goes to a worker before it goes to the engineer.**
 `devpath:technical-design` decided a change to what the slice builds, and the steps on the box are for
