@@ -254,10 +254,12 @@ decision rather than whether one is owed. `- [ ] excess` is the commit audit's n
 swept in past the slice's `wrote:`, closed on the human's decision at merge: `- [x] false positive` where
 the file belonged in the commit, or `- [x] won't fix — <reason>` where it did not.
 
-**`- [ ] blocked` is the other tagged box, and its exit is not a tick.** A foreign guard refused a write
-a slice needs; a human clears the obstacle outside the run and the next `devpath:build` closes the box on
-what it finds. **Neither disposition above applies to it** — offering them here is how a merge gets armed
-on an obstacle nobody cleared. Print the slice path and say what the box is waiting on.
+**`- [ ] blocked` and `- [ ] verify` are the other tagged boxes, and their exit is not a tick here.**
+`blocked` waits on a human clearing a foreign guard's refusal outside the run, and `verify` waits on the
+engineer trying a criterion only a person can see. **Neither disposition above applies to them.** Offering
+one here is how a merge gets armed on an obstacle nobody cleared or a behaviour nobody saw. Print the slice
+path, say what the box is waiting on, and name `devpath:build` as the next act: it closes a `blocked` box
+on what it finds, and it asks the engineer about a `verify` box.
 
 **Print every unmet Outcome's block in full, all of them, before you ask about any of them.** A table of
 meanings is not a handover — the engineer in the seat needs a next act, and for two of these three exits

@@ -280,9 +280,8 @@ file can hold a pause and a `- [ ] excess` note from the commit audit, with comm
 **An untagged pause box is closed by the `devpath:technical-design` session that resolves it, ticked in
 the disposition grammar.** The frozen test joins no `done: true` to an open box there. Drop that box in a
 rewrite and the slice reads *not started* to the next `devpath:build`, with the question that stopped it
-gone. A `- [ ] excess` box stays open for the human at merge. A `- [ ] blocked` box is a pause on a write a
-foreign hook refused, and the `devpath:build` worker that resumes the slice closes it, so it reaches merge
-closed rather than open.
+gone. **A re-cut keeps every tagged box as it found it**, `verify` included, and `devpath:build`'s
+`## Deviations, and the pause test` says who closes each.
 
 ### A design that contradicts a built slice stops and asks
 

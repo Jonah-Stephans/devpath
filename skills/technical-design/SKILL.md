@@ -415,12 +415,8 @@ unblocked, and `devpath:build` refuses on a dirty tree — so a disposition left
 was written to release. Every stage that writes commits before it hands on, and this is that stage
 handing on.
 
-**The pause you clear is the untagged box, and the two tagged ones are not yours.** A `- [ ] excess` box
-under the same heading is the commit audit's — a note on files a commit swept in — and its disposition
-belongs to the human at merge. **A `- [ ] blocked` box is a pause and still not yours**: a foreign guard
-refused a write the slice needs, a human clears that outside the run, and the `devpath:build` worker that
-resumes the slice closes the box on what it finds. `devpath:build`'s `## A foreign hook's refusal` sets
-its shape and carries that branch.
+**The pause you clear is the untagged box, and the tagged ones are not yours.** `devpath:build`'s
+`## Deviations, and the pause test` lists all four and who closes each.
 
 **Ticking a `blocked` box here clears nothing.** Nothing said in this session moves another repo's hook, so
 the next `devpath:build` walks into the same refusal and pauses again, and nothing bounds how many times.
@@ -430,11 +426,12 @@ change a human made outside the run, and it stops the run again where nothing mo
 **The slice you are clearing can carry more than one box**, because the pause commit staged whatever was on
 disk: close the untagged one, and **leave a tagged box alone.**
 
-**`devpath:build`'s pause box is deliberately not one of the stops that asks through a question tool, and
-it stays prose.** The intent gate, the design gate, the slice layout and Integrate's refusal each end a
+**`devpath:build`'s untagged pause box is deliberately not one of the stops that asks through a question
+tool, and it stays prose.** The intent gate, the design gate, the slice layout and Integrate's refusal each end a
 turn on a fixed set of exits, which is what an option list is for. **A pause has no fixed set** — Build
 writes the question it got stuck on, and what it wants back is the answer in the engineer's own words. A
-builder reading *four stops* must not wire a fifth here.
+builder reading *four stops* must not wire a fifth here. **`- [ ] verify` is the box that does have a fixed
+set**, three answers to *did it work*, and `devpath:build` asks it in its own seat.
 
 **A tagged box left open still reads as *frozen*, so name the slice as the next one to build.** The frozen
 test joins the absence of `done: true` to an open box under `## Deviations` and never reads the tag, so the

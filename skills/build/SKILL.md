@@ -499,8 +499,8 @@ The print is how a human checks that claim in one glance.
 - **The order.** The `depends_on` chain the walk sorted, and that it is acyclic.
 - **Each slice.** Its `done`, its `fix_cycles`, and its open findings under `## Critique findings`.
 - **The pause check.** Per slice, an open box under `## Deviations` that is a pause, and which kind:
-  untagged, or tagged `blocked`. Or none. The frozen test below is the grammar, and `- [ ] excess` is not
-  a pause.
+  untagged, or tagged `blocked` or `verify`. Or none. The frozen test below is the grammar, and
+  `- [ ] excess` is not a pause.
 - **`touches`.** Which paths resolve, and which do not. `## Refuse first` had this run record a deviation
   for each one that does not.
 - **What expired.** Every Outcome whose `## Outcome checks` line this run expired, by ID.
@@ -835,7 +835,9 @@ request exists to prevent. **A pause commits and stops there: no push.** The per
 engineer at the terminal that just stopped, holding this run's report and the slice file, and the pull
 request is not in that loop — a repo that took README's first hook block denies exactly this push while a
 box is open. **The pause commit reaches the remote on the next push**, once a human has cleared the box and
-the slice has finished.
+the slice has finished. **A `verify` pause gets its answer in the same turn**, so a yes finishes the slice
+and pushes under `## Ask about a verify box in the same turn`. No-push is for a pause still waiting on a
+human.
 
 ### A rejected commit
 
@@ -885,6 +887,47 @@ the box states an obstacle this plugin has no standing to summarise. Its grammar
 rule are set there and hold here; its resume does not, because this box names no file to read against.
 **The first worker's `done: true` sits on that slice on disk and never reaches the branch either**, so
 nothing downstream reads it.
+
+## Ask about a verify box in the same turn
+
+**Mandated. A worker that returns having written a `- [ ] verify` box gets its pause commit, and then, in
+that turn, a question.** The box says the worker could not see one criterion work, and the engineer who
+can is in this session. `## A criterion only a person can see` in the worker prompt says when a worker
+writes one. **A run that finds an open `verify` box asks the same question before its first dispatch.**
+
+**Print each box's steps as prose first.** *The tool presents the decision. It never presents the
+material.* **Then ask through the question tool, one question per open `verify` box, with exactly these
+options:**
+
+- `I tried it, and it works`
+- `I tried it, and it doesn't work`
+- `I haven't tried it yet`
+
+**No option is marked as recommended.** The run asked because it has no verdict, so it has none to mark. **Where
+the harness offers no question tool, ask the same three in prose**, as `### The dirty-tree stop` hands over
+without one, and read the engineer's reply against them.
+
+**Each answer acts on its own box:**
+
+- **`I tried it, and it works`** → close the box as
+  `- [x] met — the engineer chose "I tried it, and it works" on <date>`, in their own words instead where
+  they typed any. Tick the criterion it names. With no `verify` box left open on the slice, write
+  `done: true`. Commit. **Dispatch no worker**, because the only thing one would do is redeploy code that
+  has not moved since its green deploy, so *nothing writes `done: true` before it deploys* still holds.
+  From here the run is the one any `done: true` return starts: the push, and the critic under
+  `## Dispatch a critic on that same return`.
+- **`I tried it, and it doesn't work`** → ask what they saw, unless they typed it into the open option.
+  Write it onto the box as `The engineer, <date>: "<their words>"`, leave the box open, and commit it as a
+  pause commit. Then dispatch a fresh worker onto the slice to answer that box. **It is not a fix pass, and
+  nothing counts it.** No critic raised a finding, so `fix_cycles` does not move and the fix cap does not
+  bound it. Every lap starts on a human's answer, and that already limits how many there are.
+- **`I haven't tried it yet`** → the run stops as any pause stops, with no push. Integrate refuses while
+  the box is open, and the next `devpath:build` asks again.
+
+**A `verify` box with an untagged pause closed below it goes to a worker before it goes to the engineer.**
+`devpath:technical-design` decided a change to what the slice builds, and the steps on the box are for
+code that change will move. The worker builds it and replaces the box, and the question waits for that
+return.
 
 ## Dispatch a critic on that same return
 
@@ -1180,7 +1223,9 @@ passes over three files leave three paths, which is what keeps the field from gr
 
 **Then write `done: true`, then return.** A slice is done when its acceptance criteria are ticked — that is
 the predicate the field carries. Value is always `true`; absence is how you say no; nothing ever writes
-`false`.
+`false`. **Where the criteria left are ones only a person can see, a `verify` box takes this step's
+place**, under `## A criterion only a person can see` below, and the orchestrator writes `done: true` on
+the engineer's yes.
 
 **A failed deploy or a failing test is the slice not being finished, and you keep working.** It is **not**
 a deviation and **not** a pause — nothing has diverged from the design and nothing needs a human yet.
@@ -1257,11 +1302,20 @@ from not-started. **A pause is an open box under `## Deviations`.** Same grammar
 under `## Critique findings` an open box means *fix this*; under `## Deviations` it means *do not proceed
 on this slice until a human clears it*. **A pause box is never ground on as a fix item.**
 
-**Three boxes can appear under this heading, and the tag says which one you are looking at.** Untagged is
-the pause this section writes, where a human owes an answer. **`- [ ] blocked` is a pause as well** — a
-foreign guard refused a write this slice needs — and `## A foreign hook's refusal` below sets its shape.
-`- [ ] excess` is the commit audit's and is not a pause at all. **The tag tells them apart wherever they
-land** — which is what a human reads, where the frozen test above reads `done`.
+**Four boxes can appear under this heading, and the tag says which one you are looking at and who closes
+it.** This is the one list of them, and every other stage points here.
+
+- **Untagged** is the pause this section writes, where a human owes an answer. The
+  `devpath:technical-design` session that resolves it closes it.
+- **`- [ ] blocked`** is a pause on a write a foreign guard refused. The `devpath:build` worker that resumes
+  the slice closes it, and `## A foreign hook's refusal` below sets its shape.
+- **`- [ ] verify`** is a pause on a criterion only a person can see. The orchestrator closes it on the
+  engineer's answer, and `## A criterion only a person can see` below sets its shape.
+- **`- [ ] excess`** is the commit audit's note on files a commit swept in, and is not a pause at all. The
+  human closes it at merge.
+
+**The tag tells them apart wherever they land.** That is what a human reads, where the frozen test above
+reads `done`.
 
 **More than one can be open on one slice, and a pause commit is how.** `git add -A` stages what is on disk
 whether the slice finished or not, so the audit can write its box on the very slice that just paused:
@@ -1292,6 +1346,9 @@ and holding one slice to build another was already *on request only*.
 
 **You do not close your own pause.** The `devpath:technical-design` session that resolves it writes the
 disposition, in that session, before it ends. A stage that could clear the box it wrote is not a stop.
+**A `verify` box closes inside this stage, and that is not this rule bending**, because the engineer
+answers it and the box records what they chose. The orchestrator already writes a `won't fix` in the
+engineer's own words on the same footing.
 
 **A `- [ ] blocked` box is closed by a later `devpath:build` worker, and that is a different act rather
 than this rule bending.** What that worker closes on is a change a human made outside the run — the file
@@ -1302,6 +1359,35 @@ run stops again. Answering your own question is the thing that would not be a st
 **So an open `- [ ] blocked` box is the brief for the next dispatch rather than a bar on it.** Building the
 slice a pause box sits on is never the thing denied, above, and here the box is what the worker reads the
 file against. Waiting for a human to tick it waits forever: the human changes the file and nothing else.
+
+## A criterion only a person can see
+
+**Write a `- [ ] verify` box when all three hold:** every criterion your tools can check is `met`, the
+deploy is green, and each one left describes behaviour no tool you hold can observe. A real mouse drag, a
+judgement by eye, a physical device and a system you cannot sign in to are that kind.
+
+**Try first.** The box reports the attempt, so make one: drive the browser, query the org, run what you
+have. **Then name the criterion, give the steps a person follows to see the behaviour, and say how far
+your tools got.** The first three lines here are yours. The fourth is the orchestrator's, written on a
+"no":
+
+```markdown
+## Deviations
+- [ ] verify — Criterion 6. In Chrome, open the Navigator on "Slice 03 drag check", press the
+      pencil, drag "1099 Generate and Print" into the empty space under "Second", then Cancel.
+      The automation's drag ends within 2 ms, before any drop target renders, so no drop landed.
+      The engineer, 2026-09-25: "The card lifts, but no drop line shows under Second and it snaps back."
+```
+
+**One box per criterion that needs one, and each is the last thing you write.** Tick the other criteria,
+fill `wrote:`, write the boxes, and return without `done: true`. The engineer then checks the code as it
+was deployed, and a yes from them finishes the slice.
+
+**Dispatched back on a box carrying the engineer's words, apply the pause test to what they saw.** *How*
+→ fix it, deploy, and **replace the box you were handed** with one whose steps fit the code as it now is,
+then return without `done: true`. The orchestrator asks again. *What* → write an untagged pause beside the
+`verify` box and return. `devpath:technical-design` clears that pause and leaves the `verify` box for the
+worker that builds the decided change, and that worker replaces the box the same way.
 
 ## On a fix pass
 

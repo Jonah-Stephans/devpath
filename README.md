@@ -730,10 +730,11 @@ writers first write them.
   box in the directory.
 - **`## Deviations`** — Build records; Integrate counts into the pull request body; the human sees it at
   merge. Recording is mandatory; whether to stop is the engineer's call. Slice appends one plain bullet
-  here, with no tag and no box, when a re-cut changes the behaviour a built slice deployed. **Three kinds
+  here, with no tag and no box, when a re-cut changes the behaviour a built slice deployed. **Four kinds
   of open box live here and the tag separates them**: an untagged `- [ ]` is a pause, `- [ ] blocked` is a
-  pause on a write a foreign hook refused, and `- [ ] excess` is the commit audit's note on files a commit
-  swept in past this slice's `wrote:`. **More than one can be open on one slice.**
+  pause on a write a foreign hook refused, `- [ ] verify` is a pause on a criterion only a person can see,
+  and `- [ ] excess` is the commit audit's note on files a commit swept in past this slice's `wrote:`.
+  **More than one can be open on one slice.**
 - **`## Critique findings`** — Critique's slice pass. Open boxes append and are never deleted, and
   a closed one leaves at the next re-review, into the archive below.
 
@@ -890,8 +891,8 @@ matter is unchanged and hook block 4's heading list is unchanged.
 | Marker | Means |
 | --- | --- |
 | `- [ ]` | **still open** — Integrate refuses |
-| `- [ ] unmet` / `- [ ] excess` / `- [ ] blocked` | the same open box with its own shortfall spelled out — `unmet` where a check fell short, `excess` where a commit went past the slice's scope, `blocked` where a foreign hook refused a write a slice needs. **What follows is what was observed, never the Outcome or the criterion restated** — under `## Outcome checks` the tag is followed by the Outcome's ID and then the observation. **Not new states** — every check greps `^[[:space:]]*- \[ \]`, which matches all three |
-| `- [x] fixed` / `- [x] met` | the code does it. **A `met` line under `## Outcome checks` is the tag and the ID, and stops there.** **A `fixed` line under `## Critique findings` is a check that went red and then green** — where nothing could be run the line says so, carrying `unverified: <why>` after the observation. **Under `## Deviations` the same tag closes a `blocked` box on what a read established, and carries no check** |
+| `- [ ] unmet` / `- [ ] excess` / `- [ ] blocked` / `- [ ] verify` | the same open box with its own shortfall spelled out — `unmet` where a check fell short, `excess` where a commit went past the slice's scope, `blocked` where a foreign hook refused a write a slice needs, `verify` where a criterion needs a person to see it. **What follows is what was observed, never the Outcome or the criterion restated** — under `## Outcome checks` the tag is followed by the Outcome's ID and then the observation. **Not new states** — every check greps `^[[:space:]]*- \[ \]`, which matches all four |
+| `- [x] fixed` / `- [x] met` | the code does it. **A `met` line under `## Outcome checks` is the tag and the ID, and stops there.** **A `fixed` line under `## Critique findings` is a check that went red and then green** — where nothing could be run the line says so, carrying `unverified: <why>` after the observation. **Under `## Deviations` the same tag closes a `blocked` box on what a read established, and carries no check**, and `met` closes a `verify` box on the engineer's answer |
 | `- [x] false positive` | there was nothing there |
 | `- [x] won't fix` | **real, not done, shipping anyway**. **Under `## Outcome checks` the tag is followed by the Outcome's ID and then the reason** |
 
@@ -911,11 +912,9 @@ box means *fix this*; under `## Deviations` it means *do not proceed on this sli
 it*. **Two readings of one test** — the grep answers *is anything open*, the section answers *what do I do
 about this one*.
 
-**Inside `## Deviations` the tag says who clears it, and that is not a third reading.** An untagged box is
-the pause, closed by the `devpath:technical-design` session that resolves it; `- [ ] blocked` is a pause a
-human clears outside the run, closed by the `devpath:build` worker that resumes the slice on what it finds;
-`- [ ] excess` is the commit audit's, closed by the human at merge. All three hold every check open until
-they close.
+**Inside `## Deviations` the tag says who clears it, and that is not a third reading.**
+`devpath:build`'s `## Deviations, and the pause test` names the clearer for each of the four kinds, and all
+four hold every check open until they close.
 
 **Every checked box carries its tag as the first word.** A bare checked box reads as *fixed in code* when
 it may not have been, and **only `fixed` and `met` mean the code changed.**
