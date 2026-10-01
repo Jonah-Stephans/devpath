@@ -180,23 +180,23 @@ fi
 
 # ------------------------------------- 4. nothing mechanical reads a tag word
 #
-# skills/integrate/SKILL.md states the rule over the whole set: the closed set of
-# tags stays five, and nothing mechanical reads a tag word. The moment something
+# skills/integrate/SKILL.md states the rule over the whole set: nothing
+# mechanical reads a tag word. The moment something
 # mechanical reads one, that tag has become a state of its own and the frozen
-# test has two answers. `- [ ] excess` and `- [ ] blocked` are each the same open
-# box with its shortfall named, so every existing check matches them and no new
-# check exists — and that is the property, held over every word rather than two.
+# test has two answers. `- [ ] excess`, `- [ ] blocked` and `- [ ] verify` are each
+# the same open box with its shortfall named, so every existing check matches them
+# and no new check exists. That is the property, held over every word.
 #
-# Six words, one check, because they fail identically and a second copy of this
+# Seven words, one check, because they fail identically and a second copy of this
 # scan is how one of them goes quiet. `blocked` arrived after `excess`, and this
 # check read those two alone, so the four words a disposition is actually written
-# in went unscanned.
+# in went unscanned. `verify` came later still.
 #
-# `unmet` is the seventh word and is deliberately not one of them. The grammar
+# `unmet` is the eighth word and is deliberately not one of them. The grammar
 # has readers that key on it by design — devpath:build cuts one slice per
 # `- [ ] unmet` line, and devpath:integrate carries every one into the pull
 # request body whole — so it is the one tag word a program is meant to find. The
-# other six have no such reader.
+# other seven have no such reader.
 #
 # Two subjects. The executable files, minus this one — README's fenced json and
 # sh blocks are shipped code a repo pastes, so they count as mechanical. The
@@ -241,7 +241,7 @@ fi
 # word would not merely break the rule, it would ratify it — and the rule would
 # then be dead with a green suite sitting on top. The tests are the last place to
 # stop looking.
-TAGS="fixed|met|false positive|won't fix|excess|blocked"
+TAGS="fixed|met|false positive|won't fix|excess|blocked|verify"
 TOOLS='grep|awk|sed|jq|case|rg|"command"'
 CODE=$(ls scripts/*.sh .github/workflows/ci.yml tests/*.sh 2>/dev/null | grep -vx 'tests/lint.sh')
 MECH=$(
@@ -255,7 +255,7 @@ MECH=$(
     | grep -vE '^[^:]+:[0-9]+:[[:space:]]*#'
 )
 if [ -n "$MECH" ]; then
-  report 'no new state' 'the six tag words' "something mechanical reads a tag word — and a tag word
+  report 'no new state' 'the seven tag words' "something mechanical reads a tag word — and a tag word
 inside a failure message counts, because this scan cannot tell a label from a search pattern and one
 that could be told apart could be fooled by a pattern dressed as a label. Reword a label; move a read:
 $MECH"
@@ -386,17 +386,20 @@ fi
 
 # ------------------------------ 7. no gate or layout prompt marks one of its options
 #
-# Five stops put a question the run cannot answer for itself: the intent gate, the
-# design gate, the slice layout, build's dirty-tree stop and build's fix cycles
-# cap. At the three gates the default *is* the judgment being asked for, so a
+# Six stops put a question the run cannot answer for itself: the intent gate, the
+# design gate, the slice layout, build's dirty-tree stop, build's fix cycles cap
+# and build's verify ask. The verify ask is the one this check cannot see: its
+# options are a bullet list with no fenced illustration, so its own prose rule is
+# all that holds it. At the three gates the default *is* the judgment being asked for, so a
 # marked option is the plugin answering its own gate. The cap trip joins them by
 # that reason and not the dirty-tree stop's: the run has computed no verdict and
 # stops because it cannot decide. At the dirty-tree stop the run has read the diff
 # and still cannot know whose work it is looking at, which is the same prohibition
-# reached by a different road. Integrate's step 3 is the one stop that marks one,
+# reached by a different road. At the verify ask the worker could not observe the
+# behaviour, which is the reason the question exists. Integrate's step 3 is the one stop that marks one,
 # because there the run computed the verdict already and the human is choosing a
 # disposition — so this check names four files and leaves
-# skills/integrate/SKILL.md out. Five stops, four files: two of them are
+# skills/integrate/SKILL.md out. Six stops, four files: three of them are
 # skills/build/SKILL.md's, so the file list does not move.
 #
 # Scoped to fenced blocks, because all four files argue the prohibition in
@@ -437,6 +440,6 @@ if [ "$PROMPTS" -lt 4 ]; then
 fi
 
 if [ "$FAIL" -eq 0 ]; then
-  echo "lint: vocabulary over $PN prose files, four compositions, two gate fields, six unread tag words, the Outcome handle grammar over five rules, $STAGES stages naming when they are over, $PROMPTS prompts marking no option — clean"
+  echo "lint: vocabulary over $PN prose files, four compositions, two gate fields, seven unread tag words, the Outcome handle grammar over five rules, $STAGES stages naming when they are over, $PROMPTS prompts marking no option — clean"
 fi
 exit "$FAIL"
