@@ -1,7 +1,7 @@
 # devpath
 
-A Claude Code plugin: ten skills under `skills/`, one shipped executable at
-`scripts/contention.sh`, five tests under `tests/`. The product is prose — the skills are
+A Claude Code plugin: ten skills under `skills/`, two shipped executables under `scripts/`
+(`contention.sh` and `pr-body.sh`), six tests under `tests/`. The product is prose — the skills are
 instructions an agent reads at run time — so a defect here is usually a wrong sentence and a
 fix is usually an edit to one.
 

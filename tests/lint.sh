@@ -3,13 +3,14 @@
 #
 # Seven checks, all of them rules rather than paragraphs: the retired vocabulary,
 # the skill-to-skill call strings, the closed set of gate fields, every tag word
-# in the disposition grammar staying unread by anything mechanical, the Outcome
-# handle grammar, every stage naming when the stage is over, and no gate or layout
-# prompt marking one of its options. What this file does not do is assert that a
-# given paragraph is still on a given page, which a diff already catches. Checks
-# 6 and 7 come closest and are still rules. Check 6 asserts a shape every file
-# derives from its own heading, never a sentence written out here, and check 7
-# asserts the absence of one string from one kind of block.
+# in the disposition grammar staying unread by anything mechanical but the body
+# script's count, the Outcome handle grammar, every stage naming when the stage
+# is over, and no gate or layout prompt marking one of its options. What this
+# file does not do is assert that a given paragraph is still on a given page,
+# which a diff already catches. Checks 6 and 7 come closest and are still rules.
+# Check 6 asserts a shape every file derives from its own heading, never a
+# sentence written out here, and check 7 asserts the absence of one string from
+# one kind of block.
 #
 # Exit code is the build's.
 
@@ -24,7 +25,7 @@ R='([^[:alnum:]_]|$)'
 
 # Every file carrying prose of devpath's authoring. Nothing under tests/ is a
 # subject: this file names every retired word as a literal.
-PROSE=$(ls skills/*/SKILL.md README.md scripts/contention.sh 2>/dev/null)
+PROSE=$(ls skills/*/SKILL.md README.md scripts/*.sh 2>/dev/null)
 PN=$(printf '%s\n' "$PROSE" | grep -c .)
 
 # A floor, not a census — it catches a glob that collapsed, and stays quiet when
@@ -181,9 +182,9 @@ fi
 # ------------------------------------- 4. nothing mechanical reads a tag word
 #
 # skills/integrate/SKILL.md states the rule over the whole set: nothing
-# mechanical reads a tag word. The moment something
-# mechanical reads one, that tag has become a state of its own and the frozen
-# test has two answers. `- [ ] excess`, `- [ ] blocked` and `- [ ] verify` are each
+# mechanical branches on a tag word. This check holds the stricter form, no read
+# at all, bar the one reader named below. The moment something mechanical reads
+# one, that tag can become a state of its own and the frozen test has two answers. `- [ ] excess`, `- [ ] blocked` and `- [ ] verify` are each
 # the same open box with its shortfall named, so every existing check matches them
 # and no new check exists. That is the property, held over every word.
 #
@@ -241,9 +242,26 @@ fi
 # word would not merely break the rule, it would ratify it — and the rule would
 # then be dead with a green suite sitting on top. The tests are the last place to
 # stop looking.
+#
+# One file is allowed three of the words, and it is scanned harder than the rest
+# in exchange. scripts/pr-body.sh writes the parts of the pull request body that
+# two runs must write identically, and README names that reader: `## Deviations`
+# and `## Critique findings` are "counted into the pull request body and read at
+# merge, and no run branches on what they say". It counts `fixed`,
+# `false positive` and `won't fix` and copies `won't fix` lines whole, the same
+# reader `unmet` already has. A count printed into the body is no state, since
+# nothing acts on it, and tests/pr-body.sh holds the script's exit status equal
+# over a spec carrying every tag word and one carrying none.
+#
+# Its awk program spreads its reads across lines with no tool word on them, so
+# the tool-word pairing above would pass it whatever it read. Every non-comment
+# line of it is scanned instead, the three words are blanked, and any tag word
+# left over goes red. A `blocked` read added there fails here.
 TAGS="fixed|met|false positive|won't fix|excess|blocked|verify"
 TOOLS='grep|awk|sed|jq|case|rg|"command"'
-CODE=$(ls scripts/*.sh .github/workflows/ci.yml tests/*.sh 2>/dev/null | grep -vx 'tests/lint.sh')
+READER=scripts/pr-body.sh
+READS="fixed|false positive|won't fix"
+CODE=$(ls scripts/*.sh .github/workflows/ci.yml tests/*.sh 2>/dev/null | grep -vx -e 'tests/lint.sh' -e "$READER")
 MECH=$(
   awk '
     /^```(json|sh|bash)$/ { fence = 1; next }
@@ -253,6 +271,9 @@ MECH=$(
   [ -n "$CODE" ] && grep -nE "${L}(${TAGS})${R}" $CODE \
     | grep -E "${L}(${TOOLS})${R}" \
     | grep -vE '^[^:]+:[0-9]+:[[:space:]]*#'
+  [ -f "$READER" ] && grep -nE "${L}(${TAGS})${R}" "$READER" \
+    | grep -vE '^[0-9]+:[[:space:]]*#' \
+    | sed -E "s/${READS}/_/g" | grep -E "${L}(${TAGS})${R}" | sed "s|^|$READER: |"
 )
 if [ -n "$MECH" ]; then
   report 'no new state' 'the seven tag words' "something mechanical reads a tag word — and a tag word

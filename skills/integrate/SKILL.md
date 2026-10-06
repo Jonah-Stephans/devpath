@@ -39,12 +39,10 @@ test — all of those are step 3's, and step 3 is a verdict on the work rather t
 3. **Refuse on an open `- [ ]`, and on a slice carrying `done: true` with no `fix_cycles:` line.**
    **Print every unmet Outcome's shortfall and where each of the three exits goes, then ask once per
    unmet Outcome. Step 3 prints and stops; it starts no run.**
-4. Write the pull request body with `gh pr edit <number> --body-file -`, under four headings.
-   `## Start Here` ranks the diff outside `devpath/` and every slice by churn;
-   `## Outside the Test Boundaries` carries every finding closed `unverified:`; `## Accepted Gaps`
-   carries **every `- [x] won't fix` and `- [ ] unmet` line from anywhere in the spec directory, in
-   full**; `## Full Details` carries `## Critique findings`, `## Deviations` and `## Traps` as a count
-   and a path.
+4. Write the pull request body with `gh pr edit <number> --body-file -`: Intent, then `## Summary`,
+   `## Merge Danger`, `## Outside the Test Boundaries`, `## Accepted Gaps` and `## Full Details`.
+   **`scripts/pr-body.sh` prints every part a rule decides**, and a fresh subagent writes
+   `## Merge Danger`.
 5. Offer to file `## devpath feedback` as an issue. **If it is empty, say the heading exists and file
    nothing.**
 6. Name a signal back to the engineer, if anything written down shows one. **If step 5 is also filing, it
@@ -232,8 +230,8 @@ way** — they are what the next run is for.
 **Why a second test earns its place at a step that was one grep.** An empty `## Critique findings` is an
 ordinary end state rather than a signal — Critique archives the boxes that were already closed at every
 re-review, so what a finished slice holds is the last pass's dispositions and sometimes nothing at all.
-Test 1 passes it either way, and step 4 then names the heading empty on a slice no critic ever read exactly
-as it does on one a critic cleared. **What tells those two apart is test 2, the `fix_cycles:` line** — the
+Test 1 passes it either way, and step 4 then counts zeros on a slice no critic ever read exactly as it
+does on one a critic cleared. **What tells those two apart is test 2, the `fix_cycles:` line** — the
 slice pass's own trace, which is what this test was already for. *Nothing was wrong* and *the pass never
 ran* are otherwise indistinguishable at every check downstream of Build. Shipping unreviewed slices is
 exactly the state a human at merge wants named. **And Build reaching Critique is model-driven**: the
@@ -391,7 +389,7 @@ most human-facing moment in the plugin.
 **Step 3 already walks the slice files** for test 2, so the read is free.
 
 **The grep reads no tag**, because Build mandates that this bullet carries none. Matching a plain prefix
-adds no state, because nothing mechanical reads a tag word.
+adds no state, because nothing mechanical branches on a tag word.
 
 ### The ask, where the harness offers a question tool
 
@@ -599,14 +597,6 @@ material they were taken against rides as a count and a path.** A decision is wh
 asked to ratify, so it has to be on the page. The material is already committed in the spec directory and
 already inside this pull request's own diff, so a path reaches it.
 
-**Neither half says where to look.** A reviewer who finishes both knows what was decided and what it was
-decided against, and not one thing about where in the diff the risk sits. One measured body did those two
-halves well, in 584 words over a `+7,101 / -552` diff across nineteen files. Nothing in it said where to
-look. A blind read of the same branch found the feature's gate enforced nowhere in the parent component.
-**What `devpath` holds that bears on the question is churn**: how much of each file moved, and
-how many fix cycles each slice took. So churn is what the body ranks, and the body says outright that
-churn is not risk.
-
 **Mandated, and the body reaches the command on standard input:**
 
 ```sh
@@ -620,295 +610,87 @@ is unbounded in length and full of characters a shell would read. Neither surviv
 **GitHub refuses a body over 65,536 characters, and the number is GitHub's rather than `devpath`'s.** One
 measured spec of eight slices held roughly 455 KB under `## Critique findings` and `## Deviations` alone,
 seven times the limit. **The purpose above is no better served by 455 KB than by the write being
-refused** — that is the observation this step turns on, and the limit is only where it stops being a
-matter of taste.
+refused.**
 
 **One shape at every scale: no size test, no threshold, no fallback branch.** A body that reads one way on
 a two-slice spec and another way on an eight-slice one is the failure this replaces, and a shape that
 appears only above some line is a shape nobody has read before the run that needs it.
 
-### Four headings, in this order
+### The body, in this order
 
-```markdown
-## Start Here
-## Outside the Test Boundaries
-## Accepted Gaps
-## Full Details
+1. **Intent**, verbatim, as `devpath:initiate` opened this body.
+2. **`## Summary`.** A file tree of every changed file outside `devpath/` with git's figures, which says
+   where the change is. Then one view of what it does.
+3. **`## Merge Danger`.** Every change that reverting the merge does not undo.
+4. **`## Outside the Test Boundaries`.** Every finding closed `fixed` carrying `unverified:`. No check in
+   this repo proved these, so this is the list a human checks by hand.
+5. **`## Accepted Gaps`.** Every `won't fix` and `- [ ] unmet` line in the spec directory, whole. These
+   are the decisions the reviewer is asked to ratify.
+6. **`## Full Details`**, collapsed. One row per slice counting fix cycles, dispositions, deviations and
+   one-way doors, linked to the slice file. It is last because it serves somebody auditing `devpath`
+   rather than reading the code.
+
+### The script writes every part a rule decides
+
+```sh
+sh "${CLAUDE_PLUGIN_ROOT}/scripts/pr-body.sh"
 ```
 
-**They follow whatever the body opens with, and they replace everything after it.** What they follow is
-the description of what changed, which is the one part of the body a reviewer of the feature rather than
-of `devpath` would have written for themselves.
+Run it on the spec's branch. It prints the whole body, and two runs over one branch print the same bytes.
+Three lines in it are slots for the parts a rule cannot write. **Replace each slot line with its part,
+change nothing else, and pipe the result to the command above.** `${CLAUDE_PLUGIN_ROOT}` is required for
+the reason step 2 gives.
 
-**The order is a route through the change**: where to look, then what nothing proved, then what was
-decided against, then the accounting that reconciles the three. **`## Full Details` is last because it is
-the only one addressed to somebody auditing `devpath` rather than reading the code.** *Twenty-eight fixed,
-eight false positive* names nothing a reviewer can act on until they already suspect something, and a body
-that opens on it spends its first screen on `devpath` telling the reviewer about `devpath`.
-
-### `## Start Here` — the two proxies, both whole
-
-**Every file in this pull request's diff outside `devpath/`, most lines changed first.**
-
-| File | +/- |
+| Slot | What replaces it |
 | --- | --- |
-| `force-app/main/default/lwc/salesforceNavigator/salesforceNavigator.js` | +1260 -4 |
-| `force-app/main/default/lwc/salesforceNavigator/salesforceNavigator.html` | +156 -12 |
-| `.claude/rules/rstk-slds2-ux-standards.md` | +0 -72 |
-| `force-app/main/default/lwc/navigatorSection/navigatorSection.js` | +58 -2 |
+| `{{intent}}` | the `## Intent` section of `spec.md`, verbatim |
+| `{{view}}` | the view below |
+| `{{merge-danger}}` | the Merge Danger subagent's return, pasted as returned |
 
-**Insertions plus deletions, never insertions alone, and the third row is why.** It is `devpath:build`'s
-own worked `- [ ] excess` box — a stale copy taking seventy-two lines off a rules file, *a revert about
-to be merged*. Ranked on insertions it sorts last of the four, under a file it outweighs. **Four rows of a
-nineteen-file diff here, and the rule above is every file** — an abridged illustration is how a shape
-nobody stated gets copied.
+**A non-zero exit means `gh` could not read this pull request**, and the write would fail on the same
+`gh`. Stop and say so.
 
-**Read against the merge-base, for the reason `devpath:build` already gives** its `excess` figures: the
-base's tip lies on any branch the base has moved past, so a comparison against that tip reports lines this
-branch never removed, and **a clause that cries wolf is a clause the reader skims**.
+### The view
 
-```sh
-base=$(gh pr view <number> --json baseRefName -q .baseRefName)
-git diff --numstat "$(git merge-base "origin/$base" HEAD)" HEAD -- . ':(exclude)devpath/'
+**Pick the smallest view that shows what the change does.** The tree above it already shows where. Six
+views: pseudocode, a call tree, a component tree, a file tree, Mermaid, and a shaped diff. A shaped diff of
+a component change:
+
+```diff
+ <salesforceNavigator>
++  editMode, draft canvas held until Save / Cancel
+   <layoutSwitcher>              (always visible)
++  <editAffordance>              (top right)
+   <navigatorSection> ×n
++    header controls             only in edit mode
 ```
 
-**`--numstat` rather than `--stat`, and the two figures ride exactly as git prints them.** `--stat` gives
-one combined figure per file and abbreviates a long path to `.../salesforceNavigator.js`, so neither the
-insertions-and-deletions rule above nor a path the reviewer can open survives it. `devpath:build` reads its own `excess` figures
-with `--numstat` for the same reason. **Where git reports a binary file — two dashes where the numbers go
-— `binary, changed` takes their place and the row sorts last**, on `devpath:build`'s own wording for the
-same output.
+### Merge Danger
 
-**`<base>` is the pull request's own, and this step already holds the number that asks for it** — the
-mandated write below is `gh pr edit <number>`. The repo default is the near miss: a pull request into a
-release branch, ranked against `main`, reports every file that branch is behind on as this branch's work.
+**Dispatch a fresh subagent and paste what it returns.** Hand it:
 
-**`devpath/` is out of the ranking, and it is the one exclusion.** The spec directory is committed on this
-branch and sits in this diff, which this step's opening paragraph says — and on a fix-heavy spec its
-slice files hold the largest changes on the branch. One measured spec of eight slices held roughly 455 KB under
-`## Critique findings` and `## Deviations` alone. Ranked beside the code they take the top rows and the
-pointing sentence with them, so the one section whose whole job is to point at the code would open on
-`devpath` telling the reviewer about `devpath`. **The reviewer loses nothing** — `## Full Details` names
-every path in the spec directory below. `devpath:build`'s commit audit already exempts the same directory
-from its own read of the diff.
+- every slice's `## Merge Danger` section
+- the diff against the merge-base, outside `devpath/`
+- `## Intent` and `## Outcomes` from `spec.md`
+- the repo's `.claude/rules/`
+- the one-way door definition in `devpath:critique`, under *Rewrite `## Merge Danger` on the slice file*
 
-**Where `origin/<base>` is not in this clone, the table's place carries a sentence** and the ordering below
-runs as written:
+**The editorial judgment is the subagent's.** It may group the critics' doors, drop one it judges
+overcautious, or add one no critic recorded. Each critic read one slice, and a door can open across two.
 
-> Files not ranked: `origin/main` is not in this clone.
+It returns a tree rooted at the merge, one branch per door, each naming the slice and one clause on what
+is lost:
 
-**The case is one a run can see**: `git merge-base` prints nothing and the diff then refuses with `fatal:
-bad revision ''`. **Say the state and say nothing about the cause**, exactly as `devpath:build`'s own
-uncompared clause does — an unauthenticated `gh` and a missing ref fail here identically. **Not silence**,
-because a ranking that is absent reads like a diff with nothing in it, which is the blank both never-empty
-rules below refuse. The pointing sentence then carries its fix-cycles clause alone.
-
-**Then every slice, most `fix_cycles` first, on one line:**
-
-```
-Fix cycles, most first: 01 (9), 05 (4), 02 (3), 03 (2), 04 (2)
+```text
+merge → deploy
+├─ deletes Navigator_Layout__c.Legacy_Json__c      slice 06
+│    stored legacy JSON gone in every org
+└─ sends email from LayoutShareService.cls        slice 07
+     a sent email can't be recalled
 ```
 
-**Both orderings run whole — no cutoff, no top three, no threshold.** A two-slice spec prints two rows
-and two figures. Same shape, smaller, which is what this step refused to make conditional above.
-
-**Ties break on path and on slice number, ascending**, so two runs of step 4 over one branch write the
-same body.
-
-**Then one sentence, and its grammar is fixed:**
-
-> Largest change: `force-app/main/default/lwc/salesforceNavigator/salesforceNavigator.js`, +1260 -4. Most
-> fix cycles: slice 01, 9. Neither is a risk measure — they are the two proxies `devpath` holds.
-
-**The path as the table wrote it, never the basename.** A repo of `index.js` files holds forty of them, and
-a sentence whose whole job is to point would be naming all forty.
-
-**A figure rather than a superlative is what keeps it true at every scale.** Where no fix pass ever ran it
-reads *Most fix cycles: slice 01, 0* — odd, and correct. *Slice 01 took the most cycles* would be a claim
-about a five-way tie.
-
-**The third clause is not hedging.** Churn is the cheapest honest proxy for *this was hard*, and it is not
-a measure of risk: the defect can sit in the file nobody struggled with. That clause is the only thing
-standing between a ranking and a reviewer reading it as a verdict.
-
-**Nothing joins a file to the slice that wrote it, because no spec directory holds that.** `touches` is
-the near miss — it sits on every slice, it names paths, and joining it to the diff stat yields a *built
-by* column that reads well on a spec that only edits files it found.
-
-**It would be wrong.** `touches` is written by `devpath:slice` before any code exists, and **`touches` is
-what this slice will collide with, not where to work** — `devpath:build`'s own words. A file a slice
-*creates* is in nobody's `touches`, which `devpath:build` also says outright: *`touches` holds
-pre-existing paths only, so a brand-new file in the other slice is invisible to the intersection.*
-`devpath:fit-check` reaches the same rule from the other side: **Read the empty-delta guard off the
-change, never off `touches`.**
-
-**On a greenfield spec such a column is blank almost everywhere**, and a blank cell reads as *no slice
-built this*. That is the failure the never-empty rule below refuses, one column over — arriving in the one
-part of the body whose whole job is to point.
-
-### `## Outside the Test Boundaries` — what nothing proved
-
-**Every `- [x] fixed` line in the spec directory carrying `unverified:`, whole, with the path it was read
-off:**
-
-```markdown
-- [x] fixed — any user could edit `Tolerance_Config__c`; unverified: no runner exists for permission sets
-      devpath/tolerance-config/slices/04-tolerance-service.md
-```
-
-**`devpath:build` writes that clause where nothing can be run**, so a line carrying it is by definition a
-finding no check in this repo can prove — and that set **is** the list a human has to check by hand.
-Collecting it is a grep rather than a judgment, which is what makes it worth mandating:
-
-```sh
-grep -rn 'unverified:' devpath/<slug>/
-```
-
-**The spec directory rather than `slices/`, because a closed finding does not stay on the slice.** Critique
-moves it to `devpath/<slug>/archive/<nn>-<name>.md` at the next re-review, and every line this section
-wants is closed by definition — so a grep scoped to `slices/` finds fewer of them the closer a spec gets to
-finished, and then prints the empty-set sentence below over a spec full of fixes nothing proved. **The
-archive file's name is the slice's name**, so a hit in there still tells the reviewer which slice, which is
-the whole of what the path is for.
-
-**Read the entry rather than the match, which is this step's own rule about the grep one screen up.** The
-clause sits at the end of the line and a slice box wraps, so a hit can land on the continuation and carry
-the *why* without the `- [x] fixed` half above it — and the observation is the part the reviewer cannot
-reconstruct. Open the file at the line the hit names and take the box whole.
-
-**Nothing else in a spec directory answers *what did the checks not reach*.** `## Traps` names mutations
-the tests **can** fail on, which is the opposite question, and `## Critique findings` counts dispositions
-without saying which of them a runner stood behind.
-
-**The path rides with it for the reason a waiver's does** below, and it is the same sentence one section
-over: a line the reviewer cannot place is a line they have to grep for.
-
-**It double-counts against the `fixed` count in `## Full Details`, deliberately, and for the reason that
-section gives below about `won't fix`.**
-
-**Never empty. Where the grep returns nothing, the section carries a sentence:**
-
-> Every finding fixed on this spec closed on a check that went red and then green. Nothing was closed on
-> a change nothing could prove.
-
-**Blank is not a claim.** A section that ran and found none, and a section nobody filled, are the same
-emptiness on the page, and the reader cannot tell which one they are looking at — the trap step 3 already
-names one level down: on an empty `## Critique findings`, *test 1 passes it either way*, and only the
-`fix_cycles:` line separates a slice a critic cleared from one no critic read.
-
-**The sentence says what the slice files hold, and never that the reviewer can skip the diff.** *Nothing
-here needs your attention* would be `devpath` deciding that off a set it filled from its own writes.
-
-**It says *fixed* and stops there, because that is the whole of what an empty grep proves.** A
-`false positive` closes on a read and a `won't fix` on a human's judgment, so neither ever carried a check
-that could be missing. *Every finding on this spec* would claim otherwise directly above the section that
-may be carrying the counter-example whole.
-
-**The honest limit, because a mandated write is not a write that happened.** This section is exactly as
-good as what the fix passes wrote: a pass that ran nothing and closed its finding bare leaves a line the
-grep cannot see, and the empty-set sentence then speaks for a spec nobody proved. It has the standing
-every composition in this plugin has — the instruction is `devpath:build`'s, invocation is model-driven,
-and what catches a skip is a human reading the slice rather than a louder rule written here.
-
-### `## Accepted Gaps` — the decisions ride in full
-
-**Every `- [x] won't fix` and `- [ ] unmet` line from anywhere in the spec directory, whole.**
-
-**That already reaches the archive and needs no edit for it.** `devpath/<slug>/archive/` is inside the spec
-directory, so a `won't fix` Critique moved out of a slice file rides here whole exactly as it did on the
-slice — and so does the standing `grep -rn "won't fix" devpath/` on the base branch. **Said because the
-archive is a second file and a reader will ask, not because the rule changed.**
-
-**Two extra lines by grammar, not two whole sections.** A criterion can close as `won't fix` under
-`## Acceptance criteria`, and exit 2 puts one under `## Outcome checks` — but carrying
-`## Acceptance criteria` wholesale would put every criterion of every slice in the body, which is the
-noise this step exists to reduce. **`- [ ] unmet` rides with it because it is the same line's other
-half:** the reviewer needs the shortfall next to the decision to ship without it.
-
-**`- [ ] excess` needs no line of its own.** Step 3 refuses while one is open, so by here it has closed
-either as `- [x] won't fix — <reason>`, which the rule above already carries whole, or as
-`- [x] false positive`, which is the commit audit withdrawing its own note.
-
-**Every line carried out of `## Outcome checks` rides with its `## Outcomes` line beside it**, because it
-references an Outcome by ID and `## Outcomes` is not one of the sections this step puts in the body:
-
-```
-- [x] won't fix O3 — audit-trail object is managed and read-only in this org
-      O3 — Tolerance breaches log to the audit trail with the breaching value
-```
-
-**Without the pairing the body loses the target.** What follows the tag is the human's words about the
-obstacle, never a statement of what went unmet, so the reviewer would meet a reason with nothing to weigh
-it against — which is the thing exit 2 exists to put in front of them.
-
-**The pairing stops at `## Outcome checks`, and a `won't fix` anywhere else rides with its path.** One
-closing an acceptance criterion carries no ID; one closing an `excess` note names files rather than an
-Outcome — so neither has an `## Outcomes` line to sit beside. **What both still owe the reviewer is which
-slice**, which the reason alone never names:
-
-```
-- [x] won't fix — hard-coded org id in the test; fixture is scratch-org-local
-      devpath/tolerance-config/slices/04-tolerance-service.md
-```
-
-**The same failure as a missing pairing, one level out.** A waiver the reviewer cannot place is a waiver
-they have to grep for, which is the re-finding this step opens by refusing. **A `won't fix` on `spec.md`
-takes no path** — there is one of those, and the pairing above already carries it.
-
-**The heading is not *Not in scope*, and the near miss is worth pinning.** `## Out of scope` is a spec
-heading one file away, and it means the opposite: deliberately excluded before the work started. A
-`won't fix` is in scope and decided against, and an `- [ ] unmet` is in scope and fell short. Reusing a
-`devpath` term for its own negation, in a body that links to the file defining it correctly, is worse than
-a phrase nobody has read before.
-
-**Never empty either, for the reason one heading up. Where both greps return nothing, the section carries
-a sentence:**
-
-> No `won't fix` and no `- [ ] unmet` anywhere on this spec. Nothing was shipped knowingly unresolved.
-
-**A heading with nothing under it is the same blank in both sections**, and this is the one a reviewer
-reads to find what they are being asked to ratify.
-
-### `## Full Details` — the material rides as a count and a path
-
-**One line per file, saying how many and where:**
-
-- **`## Critique findings`, per slice** — how many `- [x] fixed`, how many `- [x] false positive`, how
-  many `- [x] won't fix`, and the slice's path. **The counts sum the slice file and its archive** at
-  `devpath/<slug>/archive/<nn>-<name>.md`, because Critique moves a closed finding there at the next
-  re-review, so one slice's ledger is the two files together. **The archive's path goes on its own line
-  under the slice's, carrying no counts of its own**; where there is no such file there is no such line,
-  which says nothing has ever been archived on that slice. **The `won't fix` count double-counts lines
-  `## Accepted Gaps` carries whole and the `fixed` count double-counts lines
-  `## Outside the Test Boundaries` carries whole, both deliberately** — a count that did not reconcile
-  against the file at the path would send the reviewer to work out which of the two was lying.
-- **`## Deviations`, per slice** — how many entries, closed `excess` notes included, and the same path.
-- **`## Traps`, once** — how many entries, and the path to `spec.md` — `devpath/<slug>/spec.md — 2 traps`.
-  It is one section on the spec rather than one per slice, and the example below shows it at its ordinary
-  count of none.
-
-```
-devpath/tolerance-config/slices/04-tolerance-service.md — 9 fixed, 21 false positive, 2 won't fix; 3 deviations
-  devpath/tolerance-config/archive/04-tolerance-service.md
-devpath/tolerance-config/slices/05-tolerance-ui.md — 2 fixed, 0 false positive, 0 won't fix; `## Deviations` empty
-devpath/tolerance-config/spec.md — `## Traps` empty
-```
-
-**Where a section is empty, name the heading on that file's own line and carry nothing** — one line per
-file either way, exactly as the feedback offer below does for its own heading. **A count of zero is not
-the same line:** it says the section was read and held none of that disposition, where an empty heading
-says the section held nothing at all. **On `## Traps` the empty heading is the ordinary case.**
-
-**Why a path rather than the text.** All three sections are committed inside the spec directory, which is
-inside this pull request's own diff — so the body is the one place a reviewer does not need the text in
-order to reach it. What the body owes them is the shape of what happened and a way in. **The count is the
-shape; the path is the way in.**
-
-**`## Traps` is still the section that tells a reviewer what to read the tests for**, which is why its
-count is worth a line of its own. Each entry names a mutation the tests on this spec had to be able to
-fail on — the question a reviewer cannot answer from a green suite. It is also step 7's input:
-`devpath:learn` generalises `## Critique findings` at the end, and a trap is that generalisation already
-done by the pass that was there.
+A door no critic recorded names its path where the slice would go. **With no door, the section is the one
+sentence `No one-way door found on this spec.`** It never rates a change as two-way or as small in reach.
 
 ## 5 · Offer to file `## devpath feedback`
 

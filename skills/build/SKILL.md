@@ -307,9 +307,9 @@ would stop work the rest of the section is still good for.
 next act, `devpath:integrate`, which rewrites the section from scratch.
 
 **The slice file is `skills/slice/SKILL.md`'s `## Write`, followed exactly** — front matter carrying
-`depends_on` and `touches`, the test-first block, and exactly the four headings that section prints, with
+`depends_on` and `touches`, the test-first block, and exactly the five headings that section prints, with
 `wrote`, `done` and `fix_cycles` absent. The schema hook in README's own hook list flags any heading
-outside those four. **Go to that section by name** rather than writing the shape from memory; it is the
+outside those five. **Go to that section by name** rather than writing the shape from memory; it is the
 same argument this section makes for `## Outcome checks`.
 
 **`## What to build` comes from the shortfall, which is the only source you have.** The `- [ ] unmet` line

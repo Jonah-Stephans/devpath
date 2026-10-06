@@ -404,7 +404,7 @@ editing a `jq` program, gets no warning rather than an error on every write to a
         "hooks": [
           {
             "type": "command",
-            "command": "F=$(jq -r '.tool_input.file_path // \"\"'); case \"$F\" in *devpath/*/spec.md) P=\"Intent|Outcomes|Out of scope|Open questions|Evidence|Current state|Design|Traps|Outcome checks|devpath feedback\";; *devpath/*/slices/*.md) P=\"What to build|Acceptance criteria|Deviations|Critique findings\";; *) exit 0;; esac; B=$(grep -n '^## ' \"$F\" | grep -Ev \"^[0-9]+:## ($P)$\"); [ -n \"$B\" ] || exit 0; jq -n --arg f \"$F\" --arg b \"$B\" '{hookSpecificOutput:{hookEventName:\"PostToolUse\",additionalContext:(\"devpath: \" + $f + \" carries a heading outside the schema: \" + $b)}}'; exit 0",
+            "command": "F=$(jq -r '.tool_input.file_path // \"\"'); case \"$F\" in *devpath/*/spec.md) P=\"Intent|Outcomes|Out of scope|Open questions|Evidence|Current state|Design|Traps|Outcome checks|devpath feedback\";; *devpath/*/slices/*.md) P=\"What to build|Acceptance criteria|Deviations|Critique findings|Merge Danger\";; *) exit 0;; esac; B=$(grep -n '^## ' \"$F\" | grep -Ev \"^[0-9]+:## ($P)$\"); [ -n \"$B\" ] || exit 0; jq -n --arg f \"$F\" --arg b \"$B\" '{hookSpecificOutput:{hookEventName:\"PostToolUse\",additionalContext:(\"devpath: \" + $f + \" carries a heading outside the schema: \" + $b)}}'; exit 0",
             "timeout": 10
           }
         ]
@@ -719,6 +719,7 @@ fix_cycles: 1
 ## Acceptance criteria
 ## Deviations
 ## Critique findings
+## Merge Danger
 ```
 
 **That skeleton is a mid-life slice, not a new one.** `depends_on` and `touches` are Slice's, written when
@@ -739,6 +740,8 @@ writers first write them.
   **More than one can be open on one slice.**
 - **`## Critique findings`** — Critique's slice pass. Open boxes append and are never deleted, and
   a closed one leaves at the next re-review, into the archive below.
+- **`## Merge Danger`** is Critique's, rewritten whole every slice pass: one line per one-way door, or the
+  sentence that there is none.
 
 **Zero-padding is not decoration** — `ls` sorts `10-` before `2-`. **The number is authoring order, never
 execution order;** `depends_on` owns execution order. **`depends_on` values are full paths** of the form
@@ -951,19 +954,20 @@ the write adds a hook of its own — `devpath` ships none and depends on none.
 > thing.**
 
 Gating a section's presence yields the word `none` typed to satisfy a check, which is worse than nothing.
-**`## Outcome checks` is the one deliberate exception** — always written, one line per Outcome, because
-otherwise *nothing was wrong* and *the pass never ran* are indistinguishable.
+**`## Outcome checks` and a slice's `## Merge Danger` are the deliberate exceptions**, always written: one
+line per Outcome, and one per door or the no-door sentence. Otherwise *nothing was wrong* and *the pass
+never ran* are indistinguishable.
 
-**The exception binds the pass that writes it, not the section forever.** `devpath:build` expires those
+**The `## Outcome checks` exception binds the pass that writes it, not the section forever.** `devpath:build` expires those
 verdicts before it changes code, and an expired section reads as *the pass has not run against this code*
 — which is then the true state, and the one the next `devpath:integrate` run exists to replace. **The
 heading stays and the lines under it go.** Deleting the heading would put `spec.md` outside the skeleton
 above with nothing to catch it: the schema hook flags a heading that should not be there and is silent on
 one that should.
 
-**The slice pass needs no such exception, which is why the list has one entry and not two.** Its trace is
-the `fix_cycles:` line on the slice, so an empty `## Critique findings` is already distinguishable from a
-pass that never ran — and Integrate refuses on that absence.
+**`## Critique findings` needs no such exception.** Its trace is the `fix_cycles:` line on the slice, so
+an empty `## Critique findings` is already distinguishable from a pass that never ran — and Integrate
+refuses on that absence.
 
 </details>
 
@@ -1239,7 +1243,7 @@ was fix narrative written after the fix had already landed**, so none of it can 
 **250 caps the whole box rather than its post-fix half**, because capping a half needs a splitter and the
 string that run split on is one it invented — the shipped grammar is *a box entry is one line beginning
 `- [` at column zero, with nothing nested under it*. **The exemption keys on the box marker rather than on
-a tag word**, because nothing mechanical reads a tag word, so *tagged* is not a line a check can draw —
+a tag word**, because nothing mechanical branches on a tag word, so *tagged* is not a line a check can draw —
 which takes the untagged pause box in with the two that carry a tag, and the wider set is the better rule
 anyway: a box under `## Deviations` is an item whose **marker** a run reads, since a repo taking block 1
 denies a push on it and Integrate's test 1 refuses on it, where a bullet is only ever read by the human at
