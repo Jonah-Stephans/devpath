@@ -196,9 +196,11 @@ infm {
   cur = ""
   sec = substr($0, 4)
   sub(/[ \t]+$/, "", sec)
-  if (kind == "slice" && sec == "Merge Danger") hasmd[sl] = 1
   next
 }
+# Slice writes the heading empty, so the section counts as written once a
+# critic has put a door or the no-door sentence under it
+kind == "slice" && sec == "Merge Danger" && NF { hasmd[sl] = 1 }
 /^[ \t]*- / {
   flush()
   if ($0 ~ /^[ \t]*- \[[ x]\] /) { ent = $0; first = $0; entsec = sec; entfile = FILENAME }

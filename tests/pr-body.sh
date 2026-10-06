@@ -181,6 +181,8 @@ The buyer sets the ceiling on a form.
 ## Deviations
 
 ## Critique findings
+
+## Merge Danger
 EOF
 cat > "$D/slices/03-email.md" <<'EOF'
 ---

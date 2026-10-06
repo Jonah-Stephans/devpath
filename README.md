@@ -954,8 +954,8 @@ the write adds a hook of its own — `devpath` ships none and depends on none.
 > thing.**
 
 Gating a section's presence yields the word `none` typed to satisfy a check, which is worse than nothing.
-**`## Outcome checks` and a slice's `## Merge Danger` are the deliberate exceptions**, always written: one
-line per Outcome, and one per door or the no-door sentence. Otherwise *nothing was wrong* and *the pass
+**`## Outcome checks` and a slice's `## Merge Danger` are the deliberate exceptions**, always written, one
+line per Outcome and one per door or the no-door sentence. Otherwise *nothing was wrong* and *the pass
 never ran* are indistinguishable.
 
 **The `## Outcome checks` exception binds the pass that writes it, not the section forever.** `devpath:build` expires those

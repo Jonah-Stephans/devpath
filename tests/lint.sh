@@ -184,7 +184,8 @@ fi
 # skills/integrate/SKILL.md states the rule over the whole set: nothing
 # mechanical branches on a tag word. This check holds the stricter form, no read
 # at all, bar the one reader named below. The moment something mechanical reads
-# one, that tag can become a state of its own and the frozen test has two answers. `- [ ] excess`, `- [ ] blocked` and `- [ ] verify` are each
+# one, that tag can become a state of its own and the frozen test has two
+# answers. `- [ ] excess`, `- [ ] blocked` and `- [ ] verify` are each
 # the same open box with its shortfall named, so every existing check matches them
 # and no new check exists. That is the property, held over every word.
 #
@@ -248,10 +249,11 @@ fi
 # two runs must write identically, and README names that reader: `## Deviations`
 # and `## Critique findings` are "counted into the pull request body and read at
 # merge, and no run branches on what they say". It counts `fixed`,
-# `false positive` and `won't fix` and copies `won't fix` lines whole, the same
-# reader `unmet` already has. A count printed into the body is no state, since
-# nothing acts on it, and tests/pr-body.sh holds the script's exit status equal
-# over a spec carrying every tag word and one carrying none.
+# `false positive` and `won't fix`, and copies `won't fix` and `fixed` lines
+# whole into the sections that carry them, the same reader `unmet` already has.
+# A count printed into the body is no state, since nothing acts on it, and
+# tests/pr-body.sh holds the script's exit status equal over a spec carrying
+# every tag word and one carrying none.
 #
 # Its awk program spreads its reads across lines with no tool word on them, so
 # the tool-word pairing above would pass it whatever it read. Every non-comment

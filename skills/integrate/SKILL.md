@@ -636,8 +636,8 @@ appears only above some line is a shape nobody has read before the run that need
 sh "${CLAUDE_PLUGIN_ROOT}/scripts/pr-body.sh"
 ```
 
-Run it on the spec's branch. It prints the whole body, and two runs over one branch print the same bytes.
-Three lines in it are slots for the parts a rule cannot write. **Replace each slot line with its part,
+Run it on the spec's branch. It prints the body with three slot lines for the parts a rule cannot write,
+and two runs over one branch print the same bytes. **Replace each slot line with its part,
 change nothing else, and pipe the result to the command above.** `${CLAUDE_PLUGIN_ROOT}` is required for
 the reason step 2 gives.
 
@@ -647,8 +647,8 @@ the reason step 2 gives.
 | `{{view}}` | the view below |
 | `{{merge-danger}}` | the Merge Danger subagent's return, pasted as returned |
 
-**A non-zero exit means `gh` could not read this pull request**, and the write would fail on the same
-`gh`. Stop and say so.
+**On a non-zero exit, stop and show what it printed to stderr.** It exits 1 when `gh` cannot read this
+pull request, and the write would fail on the same `gh`.
 
 ### The view
 
