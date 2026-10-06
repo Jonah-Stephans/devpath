@@ -132,6 +132,7 @@ touches:
 ## Acceptance criteria
 ## Deviations
 ## Critique findings
+## Merge Danger
 ```
 
 **Write the test-first block into every slice file.** It sits between the title line and the first `## `

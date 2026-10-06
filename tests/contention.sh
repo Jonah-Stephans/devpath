@@ -1,8 +1,8 @@
 #!/bin/sh
 # devpath — the cross-spec contention checkpoint, run against a real repository.
 #
-# This is the only executable devpath ships, and the only test here that runs
-# code rather than reading prose. It is also the piece that most needs one:
+# One of the two tests here that run code rather than reading prose, with
+# tests/pr-body.sh. This one needs it most:
 # scripts/contention.sh exits 0 on every route by design, so a broken awk does
 # not fail, it reports no collisions — forever, silently, and indistinguishably
 # from a clean run. Nothing in a spec, a hook or a diff would ever show it.

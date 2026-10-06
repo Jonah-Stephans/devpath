@@ -8,9 +8,9 @@ Critique has **three passes with three subjects. Do not merge them.**
 
 | Pass | Subject | Runs | Writes |
 | --- | --- | --- | --- |
-| **The slice pass** | that slice's code | when a slice is built, inside `devpath:build`, or `devpath:critique` alone | `## Critique findings` on **that slice file**; `## Traps`, and a strike through a wrong `## Current state` note, on **`spec.md`** |
+| **The slice pass** | that slice's code | when a slice is built, inside `devpath:build`, or `devpath:critique` alone | `## Critique findings` and `## Merge Danger` on **that slice file**; `## Traps`, and a strike through a wrong `## Current state` note, on **`spec.md`** |
 | **The Outcomes pass** | the spec's Outcomes | **once, at the start of `devpath:integrate`** | `## Outcome checks` on **`spec.md`** |
-| **The change-request pass** | a human reviewer's comments on the pull request | when a reviewer requests changes and the engineer re-runs `devpath:critique` | as the slice pass — triaged findings into the fix loop |
+| **The change-request pass** | a human reviewer's comments on the pull request | when a reviewer requests changes and the engineer re-runs `devpath:critique` | as the slice pass — triaged findings into the fix loop; then the pull request body |
 
 ## Refuse first
 
@@ -302,6 +302,30 @@ section wherever the two are counted, and it grows the same way — but no pass 
 it, so there is no non-arbitrary moment to hang an archive on. Said here rather than left to read as an
 oversight.
 
+### Rewrite `## Merge Danger` on the slice file
+
+> **A one-way door is a change that reverting the merge does not undo.** Four kinds:
+>
+> - **deletes**: it deletes stored data or the schema that holds it, such as a table, a column or a field
+> - **rewrites**: it changes data already stored
+> - **sends**: it sends something out of the system, such as an email, a webhook, a queued message or a
+>   published package
+> - **removes**: it removes or renames something that code outside this repo calls
+>
+> A change the repo's rules name as one-way is one.
+
+**Mandated: every pass rewrites the section whole**, so it describes the code as it stands after this
+pass. One line per door: the kind, the diff line that makes it one-way, quoted, its path, and one
+sentence on what is lost.
+
+```markdown
+## Merge Danger
+- deletes: `<members>Navigator_Layout__c.Legacy_Json__c</members>` in `manifest/destructiveChanges.xml`. Every org this deploys to loses the stored legacy JSON.
+```
+
+**With no door, the section is the one sentence `No one-way door found on this slice.`** A critic that
+looked and found nothing then reads differently from no critic at all.
+
 ### Traps
 
 **Mandated: read `## Traps` on `spec.md` before you review the tests, and go to the heading by name.**
@@ -509,6 +533,9 @@ which is why it is written as a rule.
 **Everything else applies unchanged**: a fresh critic, the disposition grammar, `fix_cycles` and the
 fix cycles cap, and Build doing the fixing.
 
+**It ends on a fresh critic rewriting `## Merge Danger` on each fixed slice, then rewrites the pull
+request body as `devpath:integrate` step 4 does**, so a door a fix opened reaches the body.
+
 ## What no check reaches
 
 **A slice made only of custom metadata has no behavioural verification whatsoever.** No runner exists for
@@ -523,12 +550,13 @@ slice complete*, and the pull-request reviewer for *is the diff readable*.
 
 ## Stop
 
-**Critique done ⇔ this pass has written its findings and archived the closed boxes it opened the file on,
-or it stopped and named what stopped it — the slice on a tripped cap, the condition at `## Refuse first`.**
+**Critique done ⇔ this pass has written its findings, rewritten `## Merge Danger` and archived the closed
+boxes it opened the file on, or it stopped and named what stopped it — the slice on a tripped cap, the
+condition at `## Refuse first`.**
 
-Write the findings, move the boxes that were already closed into the archive, write any trap this pass
-earned, strike any `## Current state` note this pass found a confirmed finding's cause in, write
-`fix_cycles` if this pass is one of the three cases above, and return.
+Write the findings, rewrite `## Merge Danger`, move the boxes that were already closed into the archive,
+write any trap this pass earned, strike any `## Current state` note this pass found a confirmed finding's
+cause in, write `fix_cycles` if this pass is one of the three cases above, and return.
 
 **Who commits that write is your role and never which skill called this one.** **A dispatched critic
 writes and returns; the session that dispatched it commits on that return.** **The session holding this
